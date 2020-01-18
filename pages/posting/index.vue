@@ -1,0 +1,444 @@
+<template>
+    <view class='box'>
+       <textarea class='text' placeholder="请输入标题" data-type='title' @keyboardheightchange="getKeyHeight" v-model='titleVal' @blur="loseFocus(1)" @focus='getFocus(1)'></textarea>
+	   <textarea class='content' placeholder="请输入正文" data-type='title'  @keyboardheightchange="getKeyHeight" v-model='contentValue'  @blur="loseFocus(2)"  @focus='getFocus(2)'></textarea>
+	   <imgBox :imgArr='imgArr' @nextDom="nextDom" @clearImg="clearImg"></imgBox>
+	   <view class='position' @click='goCity'>
+			<image src='../../static/image/postion.png'></image>
+	   		{{currProvince}}
+	   </view>
+	   <view class='bottom' :style="{bottom: bottom + 'px'}">
+		   <view class='img-btn'>
+			   <view @click='upLoad'>
+				   <image src='../../static/images/img.png'></image>
+				   <!-- <image src='../../static/images/title.png' @click='setTitle'></image> -->
+			   </view>
+			    <button type="primary" @click='sendComment' class='comment-btn'>发帖</button>
+		   </view>
+	   </view>
+    </view>
+</template>
+
+<script>
+	let QQMapWX = require('../../utils/qqmap-wx-jssdk.min.js')
+	import http from '../../utils/http.js'
+	import imgBox from './imgBox/index.vue'
+	var showdown  = require('showdown'),
+	converter = new showdown.Converter();
+	
+    export default {
+        name:"phones",
+        components:{
+			imgBox
+		},
+        data() {
+            return {
+				qqMapSdk: null,
+				currProvince: '获取中',
+				bottom: 0,
+				//记录键盘高度
+				locBtm: 0,
+				titleVal: '',
+				imgStr: '',
+				contentType: '',
+				tempFilePaths: [],
+				qiniToken: '',
+				imgArr: [],
+				postContent: '',
+				articleTags: '',
+				contentValue: '',
+				unLoadImgArr: [],
+				setContentFont: false
+            }
+        },
+		//监听页面滚动
+		onPageScroll(e){
+			this.bottom = 0
+		},
+        methods : {
+			//设置加粗
+			// setTitle(){
+			// 	this.setContentFont = !this.setContentFont
+			// 	if(this.setContentFont) {
+			// 		uni.showToast({
+			// 			title: '已设置加粗',
+			// 			icon: 'none'
+			// 		})
+			// 	}else{
+			// 		uni.showToast({
+			// 			title: '已取消加粗',
+			// 			icon: 'none'
+			// 		})
+			// 	}
+			// },
+			nextDom(){
+				uni.hideLoading()
+			},
+			//失去焦点
+			loseFocus(type){
+				this.bottom = 0
+			},
+			//获得焦点
+			getFocus(type){
+				this.bottom = this.locBtm
+			},
+			//获取七牛token
+			getQiNiuToken(){
+				http.getUploadToken({bucketName: 'xiejiang'}).then(data => {
+					this.qiniToken = data
+				})
+			},
+			//腾讯sdk获取位置
+			getPostion(){
+				this.qqMapSdk = new QQMapWX({
+					key: 'S57BZ-S4J66-YBRS5-M3SB6-PL6PZ-JEF2M'
+				});
+				this.qqMapSdk.reverseGeocoder({
+					success: res => {
+						this.currProvince = res.result.address_component.province
+						uni.setStorage({
+							key: "city",
+							data: this.currProvince
+						})
+						uni.hideToast()
+					},
+					fail: (e) => {
+						this.currProvince = '北京市'
+					},
+					complete: e => {}
+				})
+			},
+			//敏感词过滤
+			contentFilter(value,callback){
+				uni.request({
+					url: "https://www.cachito.top/api/slip/check",
+					data: {content: value},
+					method: 'POST',
+					header: {
+						'content-type': 'application/json'
+					},
+					success: function (res) {
+						if(res.data.code == 1){
+							uni.showToast({
+								title: res.data.message,
+								icon: 'none'
+							})
+							return false
+						}
+						callback()
+					},
+					error: function(err){
+						uni.showToast({
+							title: err.code,
+							icon: 'none'
+						})
+						return false
+					},
+				})
+			},
+			//发布帖子
+			sendComment(){
+				let that = this;
+				if(that.titleVal == ''){
+					uni.showToast({
+						title: '请输入帖子标题',
+						icon: 'none'
+					})
+				}else {
+					if(this.imgArr.length > 0){
+						for(let i of this.imgArr){
+							this.imgStr+='![111]('+i+')'
+						}
+					}
+					uni.getStorage({
+						key: "userId",
+						success(res){
+							let params = {
+								"articleTitle":that.titleVal,
+								"articleContent":that.setContentFont?"<b>"+that.contentValue+'</b>'+that.imgStr : that.contentValue+that.imgStr,
+								"articleTags": that.articleTags,
+								"userId": res.data,
+								"articleImg1URL": that.imgArr[0] || '',
+								"articleCity": that.currProvince
+							}
+							that.contentFilter(params.articleContent,function(){
+								http.sengComment(params).then(data =>{
+										if(data.code == 0 && data.data){
+											uni.reLaunch({
+												url: '../index/index'
+											})
+											uni.showToast({
+												title: '上传成功',
+												icon: 'none'
+											})
+										}else {
+											that.imgStr = ''
+										}	
+									})
+							})
+						}
+					})
+				}
+			},
+			onStatusChange(){
+				
+			},
+			//删除上传的图片
+			clearImg(index){
+				this.imgArr.splice(index,1)
+			},
+			//设置键盘高度
+			getKeyHeight(event) {
+				this.contentType = event.target.dataset.type
+				if(event.detail.height == 0) {
+					this.bottom = 0
+				}
+				// if(this.bottom == 0 && event.detail.height != 0) {
+					// this.bottom = event.detail.height+50,
+					this.bottom = event.detail.height,
+					this.locBtm = this.bottom
+				// }
+			},
+			//城市选择跳转
+			goCity(){
+				let that = this
+				uni.setStorage({
+					key: "imgArr",
+					data: that.imgArr
+				})
+				uni.setStorage({
+					key: "commentTitle",
+					data: that.titleVal
+				})
+				uni.setStorage({
+					key: "commentContent",
+					data: that.contentValue
+				})
+				uni.redirectTo({
+					url: '../city/index?type='+this.articleTags
+				})
+			},
+			getImgArr(){
+				let that = this
+				uni.getStorage({
+					key: "imgArr",
+					success(res){
+						that.imgArr = res.data
+						uni.removeStorage({
+						    key: 'imgArr',
+						    success: function (res) { }
+						});
+					}
+				})
+			},
+			getcommentTitle(){
+				let that = this
+				uni.getStorage({
+					key: "commentTitle",
+					success(res){
+						that.titleVal = res.data
+						uni.removeStorage({
+						    key: 'commentTitle',
+						    success: function (res) { }
+						});
+					}
+				})
+			},
+			getcommentContent(){
+				let that = this
+				uni.getStorage({
+					key: "commentContent",
+					success(res){
+						that.contentValue = res.data
+						uni.removeStorage({
+						    key: 'commentContent',
+						    success: function (res) { }
+						});
+					}
+				})
+			},
+			//图片配置
+			upLoad() {
+				let that = this
+				
+				uni.chooseImage({
+					count: 3, // 默认9
+					sizeType: ['original', 'compressed'], // 可以指定 是原图还是压缩图，默认二者都有
+					sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+					success: (res) => {
+						uni.showLoading({
+							title: '图片上传中...',
+							mask: true,
+							icon: 'loading'
+						})
+						that.tempFilePaths = res.tempFilePaths;
+						if(that.tempFilePaths.length > 1){
+							for(let i of that.tempFilePaths) {
+								that.uploadQiniu(i)
+							}
+						}else if(that.tempFilePaths.length == 1) {
+							that.uploadQiniu(that.tempFilePaths[0]);
+							
+						}
+					}
+				})
+			},
+			//上传图片到七牛
+			uploadQiniu(fileUrl){
+				let that = this;
+				uni.uploadFile({
+					url: 'https://upload-z2.qiniup.com',
+					name: 'file',
+					filePath: fileUrl,
+					header: {
+					    "Content-Type": "multipart/form-data"
+					},
+					formData: {
+					    token: that.qiniToken,
+					},
+					success: resData =>{//
+						that.unLoadImgArr.push('http://xjm.cachito.top/'+JSON.parse(resData.data).key)
+						console.log(that.unLoadImgArr)
+						if(that.unLoadImgArr.length == that.tempFilePaths.length){
+							that.imgArr = that.unLoadImgArr
+							
+						}
+					},
+					fail: res => {
+					}
+				})
+			}
+        },
+		onLoad(e){
+			if(e.city){
+				this.currProvince = e.city
+			}else {
+				this.getPostion()
+			}
+			uni.showToast({
+				title: '加载中...',
+				mask: true,
+				icon: 'loading'
+			})
+			this.articleTags = e.type
+			uni.setNavigationBarTitle({
+			    title: '发帖('+e.type || ''+')' 
+			})
+			this.getQiNiuToken()
+			this.getImgArr()
+			this.getcommentTitle()
+			this.getcommentContent()
+		}
+		
+		
+    }
+</script>
+
+<style scoped lang='scss'>
+	.box{
+		box-sizing: border-box;
+		font-family:PingFang SC;
+		.img-box{
+			width: 750upx;
+			font-family:PingFang SC;
+			box-sizing: border-box;
+			padding:10upx 20upx;
+			display: flex;
+			flex-wrap: wrap;
+			view{
+				width: 150upx;
+				font-family:PingFang SC;
+				height: 150upx;
+				border-radius: 20upx;
+				margin-right: 20upx;
+				margin-top: 20upx;
+				overflow: hidden;
+				position: relative;
+				icon{
+					position: absolute;
+					top: 20upx;
+					right: 20upx;
+				}
+				image{
+					width: 100%;
+					height: 200upx;
+				}
+			}
+		}
+		.text{
+			font-family:PingFang SC;
+			width: 750upx;
+			box-sizing: border-box;
+			height: 200upx;
+			font-weight:bold;
+			padding: 20upx;
+			font-size: 50upx;
+			/* color:#D0D0D0; */
+			border-bottom: 1px solid #EEEEEE
+		}
+		.content{
+			font-family:PingFang SC;
+			box-sizing: border-box;
+			width: 750upx;
+			height:400upx;
+			font-size: 32upx;
+			padding: 20upx;
+			margin-top: 30upx;
+		}
+		.position{
+			font-family:PingFang SC;
+			position: fixed;
+			bottom: 120upx;
+			display: flex;
+			align-items: center;
+			padding: 10upx;
+			box-sizing: border-box;
+			width: 150upx;
+			border: 1px solid #EEEEEE;
+			border-radius: 8upx;
+			font-size: 24upx;
+			background-color: white;
+			image{
+				width: 30upx;
+				height: 30upx;
+			}
+		}
+		.bottom{
+			font-family:PingFang SC;
+			position: fixed;
+			padding: 0 20upx 0 0;
+			box-sizing: border-box;
+			width: 750upx;
+			bottom: 0;
+			.img-btn{
+				width: 100%;
+				font-family:PingFang SC;
+				background-color: white;
+				box-sizing: border-box;
+				padding: 10upx 20upx;
+				display: flex;
+				justify-content: space-between;
+				view{
+					font-family:PingFang SC;
+					width: 100upx;
+					image{
+						width: 50upx;
+						height: 50upx;
+						margin-right: 30upx;
+					}
+				}
+				.comment-btn{
+					font-family:PingFang SC;
+					margin:0;
+					padding:0;
+					height:80upx;
+					line-height: 80upx;
+					font-size: 28upx;
+					width:150upx;
+				}
+			}
+		}
+		
+	}
+	
+</style>

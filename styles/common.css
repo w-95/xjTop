@@ -1,0 +1,11 @@
+page {
+	font-size: "28upx";
+	font-family: PingFangSC-Semibold;
+	color: #333333;
+	background-color: #ffffff;
+}
+
+.container {
+	height: 100%;
+	box-sizing: border-box;
+}
