@@ -2,7 +2,7 @@
 	<view class="box">
 		<view class="service-and-specil">
 			<view class="title-box">
-				<view v-for="(t, i) in areaTitleList" :key="t.id" :class="activeTitleItem === t.id ? 'title-item active' : 'title-item'"
+				<view v-for="(t, i) in areaTitleList" :key="t.id" :class="activeTitleItem == t.id ? 'title-item active' : 'title-item'"
 					@click="handleColumnTap(t)">
 					<text>{{t.label}}</text>
 				</view>
@@ -10,14 +10,14 @@
 		</view>
 		<view class="service-and-specil">
 			<!-- <input class="uni-input" confirm-type='search' placeholder="请输入用户昵称"/> -->
-			<view class="service-column-wrapper animated fadeInLeft" v-if="activeTitleItem === 1">
+			<view class="service-column-wrapper animated fadeInLeft" v-if="activeTitleItem == 1">
 				<view class="tipss" v-if='arrData.length <= 0'>
 					<image src="../../static/images/no-comment.png" mode="" alt='i.alt' mode="widthFix" ></image>
 					<view>暂无更多申请列表!</view>
 				</view>
 				<ListBox :listBox='arrData' type='apply' v-else></ListBox>
 			</view>
-			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem === 2">
+			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem == 2">
 				<view class="tipss" v-if='arrData.length <= 0'>
 					<image src="../../static/images/no-comment.png" mode="" alt='i.alt' mode="widthFix" ></image>
 					<view>暂无更多开通列表!</view>
@@ -36,10 +36,6 @@
 	import http from '../../utils/http.js'
 	import time from '../../utils/validate.js'
 	import ListBox from './listItem/index.vue'
-	import {
-		mapState,
-		mapMutations
-	} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -61,7 +57,11 @@
 			Post,comment,ListBox
 		},
 		onLoad(e) {
-			
+			if(e.type){
+				this.activeTitleItem = e.type
+				this.DomainType = 0
+			}
+			this.init(this.DomainType)
 		},
 		created(){
 			uni.showLoading({
@@ -70,34 +70,32 @@
 				icon: 'loading'
 			});
 			uni.setNavigationBarTitle({
-			    title: '会员查询' 
+			    title: '领域查询' 
 			})
-			this.init()
 		},
 		onReady() {},
-		computed: {
-			...mapState(['province', 'auth']),
-		},
+		computed: {},
 		onShow() {
-			this.init()
+			this.init(this.DomainType)
 		},
 		methods: {
-			...mapMutations(['setAuth']),
-			commentItem(){
-				
-			},
-			init(){
-				let that = this
-				http.getApplyDomains({type:that.DomainType}).then(data => {
+			init(type){
+				let that = this,arr=[];
+				http.getApplyDomains({type:type}).then(data => {
+					if(type == 1) {
+						arr = data.sort(function(a,b){return a.userCreateTime-b.userCreateTime})
+					}else {
+						arr = data.sort(function(a,b){return a.userCreateTime-b.userCreateTime})
+					}
 					if(data.length > 0){
-						for(let i of data){
-							i.userCreateTime = time.formatTime(i.userCreateTime,"Y-M-D h:m:s")
+						for(let i of arr){
+							i.userCreateTime = time.formatTime(i.userCreateTime,"Y-M-D h:m:s").substring(5);
 							if(i.userEndTime){
-								i.userEndTime = time.formatTime(i.userEndTime,"Y-M-D h:m:s")
+								i.userEndTime = time.formatTime(i.userEndTime,"Y-M-D h:m:s").substring(5);
 							}
 						}
 					}
-					that.arrData = data || []
+					that.arrData = arr || []
 					uni.hideLoading()
 				})
 			},
@@ -121,7 +119,7 @@
 				}else {
 					this.DomainType = 0
 				}
-				this.init()
+				this.init(this.DomainType)
 			},
 			
 		}

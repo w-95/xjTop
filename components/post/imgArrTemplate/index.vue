@@ -1,7 +1,7 @@
 <template>
 	<view class="">
-		<view class="box">
-			<view v-if="imgArr.length > 0" :class="imgArr.length == 1 ? 'img-box' : imgArr.length == 2 ? 'img-box-two' : 'img-box-three'">
+		<view class="box" v-if="imgArr.length > 0">
+			<view :class="imgArr.length == 1 ? 'img-box' : imgArr.length == 2 ? 'img-box-two' : 'img-box-three'">
 				<view class="item" v-for='(i,idx) in imgArr' :key='idx'>
 					<image :src="i.src" mode="aspectFill" alt='i.alt'></image>
 				</view>
@@ -23,9 +23,10 @@
 			}
 			
 		},
-		watch: {
-			
+		created(){
+			console.log(this.imgArr)
 		},
+		watch: {},
 	}
 </script>
 

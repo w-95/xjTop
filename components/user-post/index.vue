@@ -138,8 +138,6 @@
 						this.deailDataList[i].articleContent = obj
 					}
 					this.dataList = this.deailDataList
-					console.log('------------------------------')
-					console.log(this.dataList)
 				} 
 			}
 		}

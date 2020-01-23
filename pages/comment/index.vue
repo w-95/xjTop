@@ -21,6 +21,10 @@
 <script>
 	import comment from '../../components/comment/index.vue'
 	import http from '../../utils/http.js';
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -75,7 +79,9 @@
 				icon: 'loading'
 			})
 		},
-		
+		computed: {
+			...mapState(['province', 'auth']),
+		},
 		onLoad(e){
 			//获取评论列表的id
 			this.articleId = e.id
@@ -207,34 +213,30 @@
 						"commentOriginalCommentId": '', //评论id
 						"userId": '1575618228865'
 					}
-					uni.getStorage({
-						key: "userId",
-						success(res){
-							params.userId = res.data
-							if(that.start == 'reply'){
-								params.commentOriginalCommentId = that.itemData.oId
-								params.commentContent = '回复:@'+ that.commentAuthorName+ that.commentVal
-							}
-							http.releaseComment(params).then(data =>{
-								uni.showToast({
-									title: '添加评论成功',
-									mask: true,
-									icon: 'success',
-									duration: 1500
-								})
-								that.commentVal = ''
-								that.showComment = false
-								that.init('init')
-							})
-						},
-						fail(err){
+					if(that.auth != null && that.auth.userId){
+						params.userId = that.auth.userId
+						if(that.start == 'reply'){
+							params.commentOriginalCommentId = that.itemData.oId
+							params.commentContent = '回复:@'+ that.commentAuthorName+ that.commentVal
+						}
+						http.releaseComment(params).then(data =>{
 							uni.showToast({
-								title: '请先登录!',
-								icon: 'none',
+								title: '添加评论成功',
+								mask: true,
+								icon: 'success',
 								duration: 1500
 							})
-						}
-					})
+							that.commentVal = ''
+							that.showComment = false
+							that.init('init')
+						})
+					}else {
+						uni.showToast({
+							title: '请先登录!',
+							icon: 'none',
+							duration: 1500
+						})
+					}
 				}else {
 					uni.showToast({
 						title: '请输入内容!',

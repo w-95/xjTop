@@ -27,7 +27,7 @@
 		<view v-if='(postArr.length == 0 && activeTitleItem == 1) || (repliesArr.length == 0 && activeTitleItem == 2)' class='tips-box'>{{activeTitleItem == 1 ? '暂无帖子内容':'暂无回帖内容'}}</view>
 		<view class="service-and-specil-a" v-else>
 			<view class="service-column-wrapper animated fadeInLeft" v-if="activeTitleItem == 1">
-				<Post :deailDataList='postArr' :show=true></Post>
+				<Post :deailDataList='postArr' :show=true v-if="activeTitleItem == 1"></Post>
 			</view>
 			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem == 2">
 				<view class='left' v-for='(item,index) in repliesArr' :key='index'>
@@ -44,7 +44,7 @@
 			</view>
 			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem == 3">
 				<view class='list-box'>
-					<ListBox :listBox='arrData' type='alreadyOpened'></ListBox>
+					<ListBox :listBox='arrData' type='alreadyOpened' v-if="activeTitleItem == 3"></ListBox>
 				</view>
 			</view>
 			<text class="loading-text" v-if='showLoadType'>
@@ -84,7 +84,7 @@
 				},{
 					id: 3,
 					num: 20,
-					label: '会员申请'
+					label: '领域申请'
 				}],
 				show: false,
 				page: 1,
@@ -108,11 +108,9 @@
 		},
 		onLoad(e) {
 			let that = this
-			console.log(e)
 			if(e.typeid){
 				that.activeTitleItem = e.typeid
 			}
-			console.log(this.activeTitleItem)
 			this.userId = e.id
 			uni.showToast({
 				title: '加载中...',
@@ -163,7 +161,6 @@
 					icon: 'loading'
 				})
 				let _self = this
-				console.log(_self.activeTitleItem)
 				if (_self.loadingType != 0) {//loadingType!=0;直接返回
 					uni.hideLoading()
 					return false;
@@ -255,32 +252,28 @@
 			},
 			ownDomain(id){
 				let that = this
-				uni.getStorage({
-					key: "userId",
-					success(res){
-						http.getOwnDomain({userId:res.data}).then(res => {
-							let arr = []
-							if(res.length > 0){
-								if(res.length > 0 && res.length< 10){
-									that.loadingType = 2
-								}
-								arr = res.sort(function(a,b){return b.userCreateTime-a.userCreateTime})
-								for(let i of arr){
-									i.userCreateTime = time.formatTime(i.userCreateTime,"Y-M-D h:m:s")
-									i.userEndTime = time.formatTime(i.userEndTime,"Y-M-D h:m:s")
-								}
+				if(that.auth!= null && that.auth.userId){
+					http.getOwnDomain({userId:that.auth.userId,type:1}).then(res => {
+						let arr = []
+						if(res.length > 0){
+							if(res.length > 0 && res.length< 10){
+								that.loadingType = 2
 							}
-							that.arrData = arr
-							console.log(that.arrData)
-						})
-						uni.hideToast()
-						that.activeTitleItem = id
-					},fail(err){
-						uni.navigateTo({
-							url: '../login/index'
-						})
-					}
-				})
+							arr = res.sort(function(a,b){return b.userCreateTime-a.userCreateTime})
+							for(let i of arr){
+								i.userCreateTime = time.formatTime(i.userCreateTime,"Y-M-D h:m:s")
+								i.userEndTime = time.formatTime(i.userEndTime,"Y-M-D h:m:s")
+							}
+						}
+						that.arrData = arr
+					})
+					uni.hideToast()
+					that.activeTitleItem = id
+				}else {
+					uni.navigateTo({
+						url: '../login/index'
+					})
+				}
 			},
 			handleColumnTap(item){
 				uni.showToast({

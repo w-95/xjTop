@@ -5,8 +5,9 @@
 				<image :src="item.domainIconPath" mode="widthFix"></image>
 			</view>
 			<view class="item-no-logo" v-else>
+				<!-- <view class='men'></view> -->
 				<image :src="item.domainIconPath" mode="widthFix"></image>
-				<text>(请开通权限)</text>
+				<text>(点击开通权限)</text>
 			</view>
 			<text>{{item.domainTitle}}</text>
 		</view>
@@ -40,10 +41,9 @@
 		},
 		methods: {
 			goPosting(item) {
-				console.log(item)
 				if(item.isExpired) {
 					uni.navigateTo({
-						url: '../noVip/index?uid='+item.userId+'&oid='+item.oId
+						url: '../noVip/index?uid='+item.userId+'&oid='+item.oId+'&title='+item.domainTitle
 					})
 				}else {
 					uni.navigateTo({
@@ -52,22 +52,9 @@
 				}
 			},
 			getParams(userid){
-				let imgData = d1.vipImgData
 				http.getUserList({userId: userid}).then(data => {
-					for(let i = 0; i< data.data.length;i++){
-						if(data.data[i].isExpired){
-							for(let j =0; j<imgData.length;j++){
-								if(data.data[i].domainTitle == imgData[j].title){
-									data.data[i].domainIconPath =  imgData[j].icon
-								}
-							}
-						}
-					}
 					//.reverse()
 					this.domainData = data.data
-					for(let i of this.domainData){
-						console.log(i.domainTitle,'iconPath is == ',i.domainIconPath)
-					}
 					uni.hideToast()
 				})
 			}
@@ -111,10 +98,23 @@
 				font-size: 20upx;
 				padding: 20upx 0;
 				color: #999999;
+				// .men{
+				// 	position:absolute;
+				// 	border-radius: 10upx;
+				// 	padding: 20upx 0;
+				// 	margin: 0 auto;
+				// 	width: 150upx;
+				// 	margin-top: -20rpx;
+				// 	height: 150upx;
+				// 	background-color:#000;
+				// 	opacity:0.4;
+				// 	z-index: 99;
+				// }
 				image{
 					width: 100upx;
 					height: auto;
 					margin-top: 5upx;
+					opacity:0.3;
 				}
 				
 			}

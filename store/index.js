@@ -8,7 +8,7 @@ const store = new Vuex.Store({
 		city: '', // 城市
 		auth: null, // 用户信息
 		phone: '' ,//绑定微信的手机号
-		openData: {},//openId and session_key
+		openData: null,//openId and session_key
 		userId: '',//用户Id
 		oIdVal: '',
 		isDetails: false, //是否进入到详情页
@@ -26,7 +26,7 @@ const store = new Vuex.Store({
 		setPhone(state, val) {
 			state.phone = val;
 		},
-		setOpenDatae(state, val) {
+		setOpenData(state, val) {
 			state.openData = val;
 		},
 		setAuth(state, val) {

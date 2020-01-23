@@ -1,6 +1,6 @@
 <template>
 	<view class='box-item'>
-		<view v-for='(item,index) in listBox' :key='index' class='list-box' @click='goOpenArea(item)'>
+		<view v-for='(item,index) in listBox' :key='index' class='list-box'>
 			<view class='logo-icon'>
 				<image :src="auth.userAvatarURL" mode="widthFix"></image>
 			</view>
@@ -15,8 +15,8 @@
 				</view>
 			</view>
 			<view class='right-tong' v-if="type == 'alreadyOpened'">
-				<image src="../../../static/images/tong.png" mode="widthFix" v-show='!item.isExpired'></image>
-				<image src="../../../static/images/no-tong.png" mode="widthFix" v-show='item.isExpired'></image>
+				<image src="../../../static/images/tong.png" mode="widthFix" v-show='!item.isExpired && item.isOnline == 0'></image>
+				<image src="../../../static/images/no-tong.png" mode="widthFix" v-show='!item.isExpired && item.isOnline == 1'></image>
 			</view>
 		</view>
 	</view>
@@ -27,12 +27,9 @@
 		mapState,
 		mapMutations
 	} from 'vuex';
-	
 	export default {
 		data() {
-			return {
-				
-			}
+			return {}
 		},
 		props:{
 			listBox: {
@@ -46,24 +43,13 @@
 		},
 		components: {},
 		onLoad(e) {},
-		created(){
-			console.log(this.auth)
-			console.log(this.listBox)
-		},
+		created(){},
 		onReady() {},
 		computed: {
-			...mapState(['itemDomain','auth']),
+			...mapState(['province', 'auth']),
 		},
 		onShow() {},
-		methods: {
-			...mapMutations(['setItemDomain']),
-			goOpenArea(item){
-				this.setItemDomain(item)
-				uni.navigateTo({
-					url: '../openArea/index'
-				})
-			}
-		}
+		methods: {}
 	}
 </script>
 

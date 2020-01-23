@@ -23,9 +23,7 @@
 			}
 			
 		},
-		watch: {
-			
-		},
+		watch: {},
 	}
 </script>
 

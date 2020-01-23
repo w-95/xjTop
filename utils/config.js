@@ -1,4 +1,7 @@
-const commonUrl =" http://47.96.115.210:8080/api/"  //公共路径
+//测试域名地址
+// const ENV_TEST = "http://47.96.115.210:8080/api/"
+//线上域名地址
+const ENV_TEST = "https://xj.cachito.top/api/"
  
 // post请求封装
 function postRequest(url, data) {
@@ -6,9 +9,8 @@ function postRequest(url, data) {
 	var promise = new Promise((resolve, reject) => {
 		var that = this;
 		var postData = data;
-		console.log(commonUrl + url)
 		uni.request({
-			url: "http://47.96.115.210:8080/api/" + url,
+			url: ENV_TEST + url,
 			data: postData,
 			method: 'POST',
 			header: {
@@ -41,7 +43,6 @@ function postRequest(url, data) {
  
 // get请求封装
 function getRequest(url, data) {
-	
 	var promise = new Promise((resolve, reject) => {
 		var that = this;
 		var postData = data;
@@ -50,8 +51,9 @@ function getRequest(url, data) {
 				url+='/'+data[i]
 			}
 		}
+		console.log(ENV_TEST+url)
 		uni.request({
-			url: 'http://47.96.115.210:8080/api/'+url,
+			url: ENV_TEST+url,
 			method: 'GET',
 			success: function (res) {
 				if (res.statusCode == 200 && res.data.code == 0) {

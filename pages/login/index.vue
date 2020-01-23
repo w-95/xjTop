@@ -33,7 +33,7 @@
 		onLoad() {},
 		onReady() {},
 		computed: {
-			...mapState(['province', 'auth','isDetails','detailData']),
+			...mapState(['province', 'auth','isDetails','detailData','openData']),
 		},
 		onShow() {},
 		methods: {
@@ -46,7 +46,6 @@
 			},
 			//获取用户信息
 			getuserinfo(e){
-				console.log(e)
 				let that = this
 				if(e.detail.userInfo) {
 					let params = {
@@ -56,13 +55,10 @@
 						"userAvatarURL": e.detail.userInfo.avatarUrl,
 						"userCity": e.detail.userInfo.city
 					}
-					uni.getStorage({
-						key: "userData",
-						success(res){
-							params.openId = res.data.openid
-							that.login(params)
-						}
-					})
+					if(that.openData != null && that.openData.openid){
+						params.openId = that.openData.openid
+						that.login(params)
+					}
 				}
 			},
 			//登录注册
@@ -73,13 +69,7 @@
 						that.userId = data.data.userId
 						data.data.userUpdateTime = time.formatTime(data.data.userUpdateTime,"Y-M-D h:m:s")
 						this.setAuth(data.data)
-						uni.setStorage({
-							key: "userId",
-							data: data.data.userId,
-							success: function(){
-								that.goPage()
-							}
-						})
+						that.goPage()
 					}
 					
 				})

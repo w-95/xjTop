@@ -15,6 +15,7 @@
 
 <script>
 	import http from '../../utils/http.js'
+	import {mapState,mapMutations} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -47,8 +48,10 @@
 				}
 			}
 		},
+		computed: {
+			...mapState(['province', 'auth']),
+		},
 		onLoad(e){
-			console.log(e)
 			uni.showToast({
 				title: '加载中...',
 				mask: true,
@@ -71,34 +74,26 @@
 			//提交举报
 			sendReport(){
 				let that = this
-				uni.getStorage({
-					key: "userId",
-					success(res){
-						console.log(res)
-						that.params.userId = res.data
-						that.params.reportType = that.reportType
-						that.params.reportMemo = that.reportVal
-						console.log(that.params)
-						http.report(that.params).then(data =>{
-							console.log(data)
-							if(data.code == 0){
-								uni.showToast({
-									title: '举报成功',
-									icon: 'success',
-									duration: 1500
-								})
-							}
-						})
-					},
-					fail(err){
-						console.log(err)
-						uni.showToast({
-							title: '请先登录!',
-							icon: 'none',
-							duration: 1500
-						})
-					}
-				})
+				if(that.auth != null && that.auth.userId){
+					that.params.userId = that.auth.userId
+					that.params.reportType = that.reportType
+					that.params.reportMemo = that.reportVal
+					http.report(that.params).then(data =>{
+						if(data.code == 0){
+							uni.showToast({
+								title: '举报成功',
+								icon: 'success',
+								duration: 1500
+							})
+						}
+					})
+				}else {
+					uni.showToast({
+						title: '请先登录!',
+						icon: 'none',
+						duration: 1500
+					})
+				}
 			}
 		}
 	}

@@ -8,17 +8,20 @@
 				</view>
 				<view class="title-content">{{item.articleTitle}}</view>
 				<!-- 标签部分 -->
-				<view class="label" v-if="show">
+				<view class="label" v-if="show && item.articleTagObjs && item.articleTagObjs.length>0">
 					<view class="item" v-for="(i,idx) in item.articleTagObjs" :key='idx'>
 						{{i.tagTitle}}
 					</view>
 				</view>
+				<view class='label' v-if='show && item.articleTags && !item.articleTagObjs'>
+					<view class="item">{{item.articleTags}}</view>
+				</view>
 			</view>
 			
 			<view class='img-list' v-if='item.offered'>
-				<image src='../../static/images/bgc.jpeg'></image>
-				<image src='../../static/images/bgc.jpeg'></image>
-				<image src='../../static/images/bgc.jpeg'></image>
+				<!-- <image src='../../static/images/bgc.jpeg'></image> -->
+				<!-- <image src='../../static/images/bgc.jpeg'></image> -->
+				<!-- <image src='../../static/images/bgc.jpeg'></image> -->
 			</view>
 			<view class="content" v-else>
 				<view v-html="item.articleContent.textContent.replace(/(\r\n|\n|\r|↵)/gm, '<br/>')" class="text-content"></view>
@@ -121,6 +124,8 @@
 			setDeailDataList(){
 				if(this.deailDataList){
 					for(let i = 0;i < this.deailDataList.length;i++){
+						this.deailDataList[i].articleContent = this.deailDataList[i].articleContent.replace(this.deailDataList[i].articleTitle,'')
+						
 						let arr = [],newArr=[];
 						let obj = {
 							isImg: false,
@@ -150,7 +155,6 @@
 						this.deailDataList[i].articleContent = obj
 					}
 					this.dataList = this.deailDataList
-					console.log('------------------------------')
 					console.log(this.dataList)
 				} 
 			}

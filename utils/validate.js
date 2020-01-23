@@ -32,7 +32,8 @@ export default {
 		    format = format.replace(formateArr[i], returnArr[i]);
 		  }
 		  return format;
-	}
+	},
+	
 };
 
 

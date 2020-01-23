@@ -8,7 +8,7 @@
 				<view class='title'>
 					<text>{{item.user.userName}}</text>
 					<view>申请：{{item.userCreateTime}}</view>
-					<view>开通：{{item.userEndTime}}</view>
+					<view class='end'>开通：{{item.userEndTime}}</view>
 				</view>
 				<view class='title-bom'>
 					<text>{{item.domainURI}}</text>
@@ -27,15 +27,10 @@
 </template>
 
 <script>
-	import {
-		mapState,
-		mapMutations
-	} from 'vuex';
+	import {mapState,mapMutations} from 'vuex';
 	export default {
 		data() {
-			return {
-				
-			}
+			return {}
 		},
 		props:{
 			listBox: {
@@ -60,6 +55,9 @@
 		methods: {
 			...mapMutations(['setItemDomain']),
 			goOpenArea(item){
+				if(this.type == 'alreadyOpened'){
+					return false
+				}
 				this.setItemDomain(item)
 				uni.navigateTo({
 					url: '../openArea/index'
@@ -76,7 +74,7 @@
 		.list-box{
 			// width: 100%;
 			box-sizing: border-box;
-			padding: 20upx;
+			padding: 5upx 20upx;
 			display: flex;
 			align-items: center;
 			justify-content:space-between;
@@ -107,18 +105,21 @@
 						color: #C3C3C3;
 						display: flex;
 						justify-content: space-between;
-						margin-top: 20upx;
+						margin-top: 10upx;
+					}
+					.end{
+						margin-top: 3upx;
 					}
 				}
 				.title-bom{
 					font-family:PingFang SC;
 					font-size: 24upx;
-					min-width: 80upx;
+					min-width: 130upx;
 					text-align: center;
 				}
 			}
 			.right-item{
-				width: 100upx;
+				min-width: 100upx;
 				font-family:PingFang SC;
 				font-size: 24upx;
 				color: #1296db;
@@ -132,6 +133,7 @@
 			.right-tong{
 				image{
 					width: 50upx;
+					height: auto;
 				}
 			}
 		}

@@ -16,7 +16,7 @@
 				<view class='area-box' v-if='arrData.length> 0'>
 					<view v-for='(item,index) in arrData' :key='index' class='item' @click='detailType(item,index)'>
 						<view>
-							<image :src="item.domainIconPath" mode="widthFix"></image>
+							<image :src="item.domain.domainIconPath" mode="widthFix"></image>
 						</view>
 						<text>{{item.domainURI}}</text>
 					</view>
@@ -28,7 +28,7 @@
 			<view class='active-title'>申请开通领域</view>
 			<view class='area'>
 				<view class='area-type'>
-					<image :src="userData.domainIconPath"></image>
+					<image :src="userData.domain.domainIconPath"></image>
 					<view>{{userData.domainURI}}</view>
 				</view>
 				<view class='time' @click="changeShow('QS_Picekr_date')">{{defaultTimeTips}}</view>
@@ -136,40 +136,32 @@
 			},
 			//点击领域的item
 			detailType(item,index){
+				console.log(item)
 				this.clearItem = item
 				this.show = !this.show
-				this.toastTips = "确定要关闭'"+item.domainTitle+"'领域的权限吗"
+				this.toastTips = "确定要关闭'"+item.domain.domainTitle+"'领域的权限吗"
 				this.detailindex = index
 			},
 			changeShow(name) {
 				this.$refs[name].show();
 			},
-			showQSPicker(res) {
-				console.log(`pickerId为${res.pickerId},类型为${res.type}的QS-picker显示了`);
-			},
-			hideQSPicker(res) {
-				console.log(`pickerId为${res.pickerId},类型为${res.type}的QS-picker隐藏了了`);
-			},
+			showQSPicker(res) {},
+			hideQSPicker(res) {},
 			confirmTime(res) {
-				console.log(res)
 				let arr = res.data.split("-")
 				this.$refs['QS_Picekr_date'].hide();
 				this.defaultTime = res.data
 				this.defaultTimeTips = '到期日期：'+arr[0]+'年'+ (arr[1]< 10 ? '0'+arr[1] : arr[1])+'月'+(arr[2]< 10 ? '0'+arr[2] : arr[2])+'日'
 			},
 			//取消弹框
-			cancel(e){
-				console.log(e)
-			},
+			cancel(e){},
 			//确认弹框
 			confirm(e){
 				this.arrData.splice(this.detailindex,1)
 				this.detailDomain()
 			},
 			//点击确认取消的回调
-			event(e){
-				console.log(e)
-			},
+			event(e){},
 			detailDomain(){
 				let that = this
 				http.DetailDomain({oid: that.clearItem.oId}).then(res =>{
@@ -181,6 +173,7 @@
 			},
 			init(){
 				let that = this
+				console.log(that.itemDomain,"－－+++++++++")
 				if(JSON.stringify(that.itemDomain) != '{}') {
 					that.userData = that.itemDomain
 					that.getDomainsList(that.itemDomain.userId)
@@ -188,8 +181,7 @@
 			},
 			getDomainsList(id){
 				let that = this
-				http.getOwnDomain({userId: id}).then(data => {
-					console.log(data)
+				http.getOwnDomain({userId: id,type:0}).then(data => {
 					that.arrData = data
 					uni.hideLoading()
 				})
@@ -213,9 +205,13 @@
 				http.getUpdateDomains(params).then(res => {
 					uni.showToast({
 						title: '开通领域成功',
-						icon: 'none'
+						icon: 'none',
+						duration: 3000
 					})
-					this.init()
+					uni.navigateTo({
+						url: '../memberSearch/index?type=2'
+					})
+					// this.init()
 				})
 			}
 		}
@@ -299,7 +295,7 @@
 				width: 100%;
 				display: flex;
 				flex-wrap: wrap;
-				margin-left: 40rpx;
+				// margin-left: 40rpx;
 				box-sizing: border-box;
 				.item{
 					width: 20%;

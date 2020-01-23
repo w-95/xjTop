@@ -111,8 +111,7 @@
 		components: {comment},
 		created(){},
 		computed: {
-			...mapState(['province','oIdVal','isDetails']),
-			// ...mapState(['province', 'auth']),
+			...mapState(['province','oIdVal','isDetails','auth']),
 		},
 		onLoad(e){
 			this.setCommentTitle =e.title
@@ -125,7 +124,8 @@
 			uni.setNavigationBarTitle({
 			    title: e.title
 			})
-			this.getDetail(this.oId)
+			this.setOidVal(e.id)
+			this.getDetail(e.id)
 		},
 		mounted(){},
 		// 上拉加载
@@ -165,12 +165,10 @@
 		methods: {
 			...mapMutations(['setOidVal','setIsDetails']),
 			ViewImage(e) {
-				console.log(e)
 				let arr = []
 				for(let i of e.currentTarget.dataset.imgarr){
 					arr.push(i.src)
 				}
-				console.log(arr)
 				uni.previewImage({
 					urls: arr,
 					current: arr[e.currentTarget.dataset.index]
@@ -183,68 +181,53 @@
 			},
 			//评论
 			goComment(){
-				let that = this
-				uni.getStorage({
-					key: "userId",//userRole
-					success(res){
-						let params = {
-							userId: res.data,
-							domainURI: that.params.articleTags
-						}
-						http.getUserDiction(params).then(data => {
-							if(data.isExpired){
-								uni.navigateTo({
-									url: '../noVip/index'
-								})
-							}else {
-								console.log(that)
-								that.setOidVal(that.oId)
-								console.log(that.oId)
-								uni.navigateTo({
-									url: '../comment/index?id='+ that.oId+'&articleAuthorId='+that.params.articleAuthorId+'&title='+that.setCommentTitle
-								})
-							}
-						})
-					},
-					fail(err){
-						that.setIsDetails(true)
-						console.log(that)
-						uni.showToast({
-							title: '请先登录!',
-							icon: 'none',
-							duration: 1500
-						})
-						uni.navigateTo({
-							url: '../login/index'
-						})
+				let that = this;
+				if(that.auth != null && that.auth.userId){
+					let params = {
+						userId: that.auth.userId,
+						domainURI: that.params.articleTags
 					}
-				})
+					http.getUserDiction(params).then(data => {
+						if(data.isExpired){
+							uni.navigateTo({
+								url: '../noVip/index'
+							})
+						}else {
+							that.setOidVal(that.oId)
+							uni.navigateTo({
+								url: '../comment/index?id='+ that.oId+'&articleAuthorId='+that.params.articleAuthorId+'&title='+that.setCommentTitle
+							})
+						}
+					})
+				}else {
+					that.setIsDetails(true)
+					uni.showToast({
+						title: '请先登录!',
+						icon: 'none',
+						duration: 1500
+					})
+					uni.navigateTo({
+						url: '../login/index'
+					})
+				}
 			},
 			//举报
 			goList() {
-				let that = this
-				uni.getStorage({
-					key: "userId",
-					success(res){
-						// if(res.data == 'defaultRole' || res.data == 'memberRole'){
-							uni.navigateTo({
-								url: '../list/index?reportDataType=0&Id='+that.params.articleAuthorId
-							})
-						// }else{
-							
-						// }
-					},
-					fail(err){
-						uni.showToast({
-							title: '请先登录!',
-							icon: 'none',
-							duration: 1500
-						})
-						uni.navigateTo({
-							url: '../login/index'
-						})
-					}
-				})
+				let that = this;
+				if(that.auth!= null && that.auth.userId){
+					uni.navigateTo({
+						url: '../list/index?reportDataType=0&Id='+that.params.articleAuthorId
+					})
+				}else {
+					uni.showToast({
+						title: '请先登录!',
+						icon: 'none',
+						duration: 1500
+					})
+					uni.navigateTo({
+						url: '../login/index'
+					})
+				}
 			},
 			//获取详情
 			getDetail(oId){

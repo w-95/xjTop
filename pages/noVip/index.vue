@@ -7,7 +7,7 @@
 			</view>
 		</view>
 		<view class="musin">
-			<view class="title">会员权益</view>
+			<view class="title">领域权益</view>
 			<view class="tips-box">
 				<view class="box-left">
 					<image src="../../static/images/mao.png" mode=""></image>
@@ -23,7 +23,7 @@
 				<view class="tips-box">
 					<view class="box-left" @click="goDial">
 						<image src="../../static/images/phone.png" mode=""></image>
-						<view class="title">开通会员请联系</view>
+						<view class="title">联系客服</view>
 					</view>
 				</view>
 			</view>
@@ -50,7 +50,7 @@
 			})
 			
 			uni.setNavigationBarTitle({
-			    title: '请开通会员' 
+			    title: '开通领域权限' 
 			})
 			uni.hideToast()
 		},
@@ -73,6 +73,19 @@
 					
 				  });
 			},
+			// 是否申请过
+			isResetDomain(){
+				let that = this;
+				if(JSON.stringify(this.userData) != '{}'){}
+				let params = {
+					userId: this.userData.uid,
+					title: that.userData.title
+				}
+				http.getUserDiction(params).then(data => {
+					console.log(data)
+				})
+			},
+			//权限申请
 			openVip(){
 				if(JSON.stringify(this.userData) != '{}'){
 					let params = {
@@ -81,6 +94,7 @@
 						type: 1
 					}
 					http.getAddDomain(params).then(res =>{
+						console.log(res)
 						uni.showToast({
 							title: '申请成功!',
 							icon: 'none'

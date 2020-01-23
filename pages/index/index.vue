@@ -4,6 +4,7 @@
 			<icon type="search" size="15" color='#999999'></icon>
 			<input class="uni-input" confirm-type='search' placeholder="搜索" @input ="changeInput" @click='getFocus' :focus="false" disabled=true/>
 			<button type="primary" @click='goMember' class='juris-diction-btn' v-if="auth!=null && auth.userRole == 'adminRole'">权限</button>
+			<!-- <button type="primary" @click='goMember' class='juris-diction-btn'>权限</button> -->
 		</view>
 		<view class="title" v-if="doMainData.length > 0">
 			<view></view>
@@ -17,13 +18,19 @@
 				<text>{{item.domainTitle}}</text>
 			</view>
 		</view>
-		<view class="title" v-if="officeArr.length>0"><view></view>官方信息</view>
-		<Post :deailDataList ='officeArr'  v-if="officeArr.length>0" :show = false></Post>
+		<view class="title" v-if="officeArr.length>0">
+			<view></view>
+			官方信息
+		</view>
+		<Post :deailDataList ='officeArr' v-if="officeArr.length>0" :show=false></Post>
 		
-		<view class="title"  v-if="newCommenArr.length>0"><view></view>最新帖子</view>
-		<Post :deailDataList ='newCommenArr' v-if="newCommenArr.length>0" :show = true></Post>
+		<view class="title" v-if="newCommenArr.length > 0">
+			<!-- <view></view> -->
+			<!-- 最新帖子 -->
+		</view>
+		<!-- <Post :deailDataList ='newCommenArr' v-if="newCommenArr.length>0" :show = true></Post> -->
 		
-		<view class="tips" v-if="doMainData.length == 0 && officeArr.length == 0 && newCommenArr.length == 0 && showNullTips">
+		<view class="tips" v-if="doMainData.length == 0 && officeArr.length == 0 && newCommenArr.length == 0 && showNullTips && !isInitLoading">
 			<image src="../../static/images/no_data.png" mode="" alt='i.alt' mode="widthFix" ></image>
 			<view>暂无更多数据！</view>
 		</view>
@@ -43,10 +50,7 @@
 <script>
 	import Post from '../../components/post/index.vue'
 	import http from '../../utils/http.js';
-	import {
-		mapState,
-		mapMutations
-	} from 'vuex';
+	import {mapState,mapMutations} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -67,11 +71,13 @@
 				    contentrefresh: '正在加载...', //1
 				    contentnomore: '没有更多数据了' //else
 				},
+				clickNum: 0,
 				start: '',
 				//是否显示底部加载状态
 				showLoadType: true,
 				//是否显示暂无数据
-				showNullTips: false
+				showNullTips: false,
+				isInitLoading: true
 			}
 		},
 		components: {
@@ -96,6 +102,7 @@
 				icon: 'loading'
 			})
 			let that = this
+			that.loadingType = 2
 			if (that.loadingType != 0) {//loadingType!=0;直接返回
 				uni.hideLoading()
 				return false;
@@ -109,9 +116,15 @@
 		computed: {
 			...mapState(['province', 'auth']),
 		},
+		onShareAppMessage(res) {
+		    return {
+				title: '鞋匠帮',
+				path: '/pages/index/index'
+		    }
+		 },
 		created(){
 			this.init('init')
-			console.log(this.auth)
+			
 		},
 		onShow() {
 			let that = this
@@ -142,9 +155,14 @@
 				that.getListName(type)
 			},
 			goMember(){
-				uni.navigateTo({
-					url: '../memberSearch/index'
-				})
+				let that = this
+				that.clickNum+=1;
+				if(that.clickNum == 1){
+					uni.navigateTo({
+						url: '../memberSearch/index'
+					})
+				}
+				setTimeout(function () { that.clickNum = 0 }, 3000);
 			},
 			resetParams(){
 				this.page = 1;
@@ -166,17 +184,17 @@
 					pageSize: this.size
 				},that = this;
 				http.getIndexComment(params).then(data =>{
-					
+					that.isInitLoading = false
 					if(type == 'refresh'){
 						that.newCommenArr = data.articles
-						uni.hideNavigationBarLoading();
-						uni.stopPullDownRefresh();
+						uni.hideNavigationBarLoading();//关闭动画
+						uni.stopPullDownRefresh();//得到数据后停止下拉刷新
 						uni.hideLoading()
 						if(data.articles.length <= 0){
 							this.showNullTips = true
 						}else if(data.articles.length > 0 && data.articles.length < 10) {
-								that.loadingType = 2
-							}
+							that.loadingType = 2
+						}
 						uni.showToast({
 							title: '已经是最新了',
 							mask: true,
@@ -224,6 +242,7 @@
 						data[i].show = false
 					}
 					this.officeArr = data
+					this.isInitLoading = false
 				})
 				this.getIndexParams(type)
 			},
@@ -236,27 +255,23 @@
 			//我的页面
 			goMyDetail(){
 				let that = this
-				uni.getStorage({
-					key: "userId",
-					success(res){
-						that.getUserDefault(res.data).then(res1 =>{
-							if(res1){
-								uni.navigateTo({
-									url: '../myData/index?id='+res.data
-								})
-							}else{
-								uni.navigateTo({
-									url: '../choiceField/index?id='+res.data
-								})
-							}
-						})
-					},fail(err){
-						uni.navigateTo({
-							url: '../login/index'
-						})
-					}
-				})
-				
+				if(that.auth != null && that.auth.userId){
+					that.getUserDefault(that.auth.userId).then(res =>{
+						if(res){
+							uni.navigateTo({
+								url: '../myData/index?id='+that.auth.userId
+							})
+						}else{
+							uni.navigateTo({
+								url: '../choiceField/index?id='+that.auth.userId
+							})
+						}
+					})
+				}else {
+					uni.navigateTo({
+						url: '../login/index'
+					})
+				}
 			},
 			//用户是否选择默认领域
 			getUserDefault(userid){
@@ -276,6 +291,7 @@
 				http.getUserList({userId: ''}).then(data => {
 					if(data.code == 0){
 						that.doMainData = data.data
+						that.isInitLoading = false
 					}
 					
 				})
@@ -283,28 +299,23 @@
 			//选择领域
 			choiceField(){
 				let that = this
-				uni.getStorage({
-					key: "userId",
-					success(res){
-						that.getUserDefault(res.data).then(res1 =>{
-							if(res1){
-								uni.navigateTo({
-									url: '../vip/index?id='+res.data
-								})
-							}else{
-								uni.navigateTo({
-									url: '../choiceField/index?id='+res.data
-								})
-							}
-						})
-					},
-					fail(err){
-						uni.navigateTo({
-							url: '../login/index'
-						})
-					}
-				})
-				
+				if(that.auth != null && that.auth.userId){
+					that.getUserDefault(that.auth.userId).then(res =>{
+						if(res){
+							uni.navigateTo({
+								url: '../vip/index?id='+that.auth.userId
+							})
+						}else{
+							uni.navigateTo({
+								url: '../choiceField/index?id='+that.auth.userId
+							})
+						}
+					})
+				}else {
+					uni.navigateTo({
+						url: '../login/index'
+					})
+				}
 			},
 		}
 	}

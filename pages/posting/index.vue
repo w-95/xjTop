@@ -23,9 +23,9 @@
 	let QQMapWX = require('../../utils/qqmap-wx-jssdk.min.js')
 	import http from '../../utils/http.js'
 	import imgBox from './imgBox/index.vue'
-	var showdown  = require('showdown'),
-	converter = new showdown.Converter();
-	
+	var showdown  = require('showdown'),converter = new showdown.Converter();
+	import {mapState,mapMutations} from 'vuex';
+	import d1 from '../../common/data/d1.js'
     export default {
         name:"phones",
         components:{
@@ -48,29 +48,19 @@
 				articleTags: '',
 				contentValue: '',
 				unLoadImgArr: [],
-				setContentFont: false
+				setContentFont: false,
+				//点击记数
+				clickNum: 0
             }
         },
 		//监听页面滚动
 		onPageScroll(e){
 			this.bottom = 0
 		},
+		computed: {
+			...mapState(['province', 'auth']),
+		},
         methods : {
-			//设置加粗
-			// setTitle(){
-			// 	this.setContentFont = !this.setContentFont
-			// 	if(this.setContentFont) {
-			// 		uni.showToast({
-			// 			title: '已设置加粗',
-			// 			icon: 'none'
-			// 		})
-			// 	}else{
-			// 		uni.showToast({
-			// 			title: '已取消加粗',
-			// 			icon: 'none'
-			// 		})
-			// 	}
-			// },
 			nextDom(){
 				uni.hideLoading()
 			},
@@ -84,14 +74,14 @@
 			},
 			//获取七牛token
 			getQiNiuToken(){
-				http.getUploadToken({bucketName: 'xiejiang'}).then(data => {
+				http.getUploadToken({bucketName: d1.bucketName}).then(data => {
 					this.qiniToken = data
 				})
 			},
 			//腾讯sdk获取位置
 			getPostion(){
 				this.qqMapSdk = new QQMapWX({
-					key: 'S57BZ-S4J66-YBRS5-M3SB6-PL6PZ-JEF2M'
+					key: d1.QQSDK
 				});
 				this.qqMapSdk.reverseGeocoder({
 					success: res => {
@@ -139,45 +129,49 @@
 			//发布帖子
 			sendComment(){
 				let that = this;
-				if(that.titleVal == ''){
+				if(that.clickNum >= 1){
+					return false
+				}else if(that.titleVal == ''){
 					uni.showToast({
 						title: '请输入帖子标题',
 						icon: 'none'
 					})
 				}else {
+					that.clickNum+=1
 					if(this.imgArr.length > 0){
 						for(let i of this.imgArr){
 							this.imgStr+='![111]('+i+')'
 						}
 					}
-					uni.getStorage({
-						key: "userId",
-						success(res){
-							let params = {
-								"articleTitle":that.titleVal,
-								"articleContent":that.setContentFont?"<b>"+that.contentValue+'</b>'+that.imgStr : that.contentValue+that.imgStr,
-								"articleTags": that.articleTags,
-								"userId": res.data,
-								"articleImg1URL": that.imgArr[0] || '',
-								"articleCity": that.currProvince
-							}
-							that.contentFilter(params.articleContent,function(){
-								http.sengComment(params).then(data =>{
-										if(data.code == 0 && data.data){
-											uni.reLaunch({
-												url: '../index/index'
-											})
-											uni.showToast({
-												title: '上传成功',
-												icon: 'none'
-											})
-										}else {
-											that.imgStr = ''
-										}	
-									})
-							})
+					if(that.auth != null && that.auth.userId){
+						let params = {
+							"articleTitle":that.titleVal,
+							"articleContent":that.setContentFont?that.titleVal+"<b>"+that.contentValue+'</b>'+that.imgStr : that.titleVal+that.contentValue+that.imgStr,
+							"articleTags": that.articleTags,
+							"userId": that.auth.userId,
+							"articleImg1URL": that.imgArr[0] || '',
+							"articleCity": that.currProvince
 						}
-					})
+						that.contentFilter(params.articleContent,function(){
+							http.sengComment(params).then(data =>{
+								if(data.code == 0 && data.data){
+									// uni.reLaunch({
+										// url: '../index/index'
+									// })
+									uni.navigateTo({
+									   url:"../fieldTab/index?domainTitke="+that.articleTags
+									})
+									uni.showToast({
+										title: '上传成功',
+										icon: 'none'
+									})
+								}else {
+									that.imgStr = ''
+								}	
+							})
+						})
+					}
+					setTimeout(function () { that.clickNum = 0 }, 3000);
 				}
 			},
 			onStatusChange(){
@@ -259,8 +253,7 @@
 			},
 			//图片配置
 			upLoad() {
-				let that = this
-				
+				let that = this;
 				uni.chooseImage({
 					count: 3, // 默认9
 					sizeType: ['original', 'compressed'], // 可以指定 是原图还是压缩图，默认二者都有
@@ -297,15 +290,12 @@
 					    token: that.qiniToken,
 					},
 					success: resData =>{//
-						that.unLoadImgArr.push('http://xjm.cachito.top/'+JSON.parse(resData.data).key)
-						console.log(that.unLoadImgArr)
+						that.unLoadImgArr.push(d1.QiNiuImgDomainName+JSON.parse(resData.data).key)
 						if(that.unLoadImgArr.length == that.tempFilePaths.length){
 							that.imgArr = that.unLoadImgArr
-							
 						}
 					},
-					fail: res => {
-					}
+					fail: res => {}
 				})
 			}
         },

@@ -7,25 +7,13 @@
 		<view class="service-and-specil">
 			<scroll-view scroll-x="true" class="title-box" v-if="areaTitleList.length > 0">
 				<block v-for="(t, i) in areaTitleList" :key="t.id">
-					<view :class="activeTitleItem === t.id ? 'title-item active' : 'title-item'" @click="handleColumnTap(t,i)">
+					<view :class="activeTitleItem == t.id ? 'title-item active' : 'title-item'" @click="handleColumnTap(t,i)">
 						<text>{{t.domainTitle}}</text>
 					</view>		
 				</block>
 			</scroll-view>
-			<view class="service-column-wrapper animated fadeInLeft" v-if="activeTitleItem === 0">
+			<view class="service-column-wrapper animated fadeInLeft" v-if="list.length > 0">
 				<Post :deailDataList='list'></Post>
-			</view>
-			<view class="service-column-wrapper animated fadeInLeft" v-if="activeTitleItem === 1">
-				<Post :deailDataList='list'></Post>
-			</view>
-			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem === 2">
-				<Post :deailDataList='list'></Post>
-			</view>
-			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem === 3">
-				<Post :deailDataList='list'></Post>
-			</view>
-			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem === 4">
-				<Post :deailDataList ='list'></Post>
 			</view>
 		</view>
 		<!-- 无数据 -->
@@ -81,6 +69,12 @@
 		components: {
 			Post
 		},
+		onShareAppMessage(res) {
+		    return {
+				title: '鞋匠帮',
+				path: '/pages/index/index'
+		    }
+		 },
 		onLoad(e) {
 			let that = this
 			uni.showLoading({
@@ -100,6 +94,8 @@
 				mask: true,
 				icon: 'loading'
 			})
+			this.page = 1
+			this.size = 10
 			uni.showNavigationBarLoading();
 			this.getList('refresh');
 		},
@@ -125,6 +121,7 @@
 		},
 		onReady() {},
 		computed: {
+			...mapState(['province', 'auth']),
 		},
 		onShow() {},
 		methods: {
@@ -141,12 +138,15 @@
 					for(let i of data){
 						i.id = num++
 					}
-					that.areaTitleList = data.reverse()
+					//.reverse()
+					that.areaTitleList = data
 					for(let i of data){
 						if(that.domainTitke == i.domainTitle){
+							console.log(i)
 							that.activeTitleItem = i.id
 						}
 					}
+					console.log(that.activeTitleItem)
 				})
 			},
 			//用户是否选择默认领域
@@ -163,31 +163,26 @@
 			},
 			choiceField(){
 				let that = this
-				uni.getStorage({
-					key: "userId",
-					success(res){
-						that.getUserDefault(res.data).then(res1 =>{
-							if(res1){
-								uni.navigateTo({
-									url: '../vip/index?id='+res.data
-								})
-							}else{
-								uni.navigateTo({
-									url: '../choiceField/index?id='+res.data
-								})
-							}
-						})
-					},
-					fail(err){
-						uni.navigateTo({
-							url: '../login/index'
-						})
-					}
-				})
+				if(that.auth != null && that.auth.userId){
+					that.getUserDefault(that.auth.userId).then(res =>{
+						if(res){
+							uni.navigateTo({
+								url: '../vip/index?id='+that.auth.userId
+							})
+						}else{
+							uni.navigateTo({
+								url: '../choiceField/index?id='+that.auth.userId
+							})
+						}
+					})
+				}else {
+					uni.navigateTo({
+						url: '../login/index'
+					})
+				}
 			},
 			//tab导航切换点击
 			handleColumnTap(item){
-				console.log(item)
 				this.showLoadType = true
 				uni.showLoading({
 					title: '加载中...',
@@ -211,26 +206,24 @@
 				this.size = 10
 			},
 			goMyDetail(){
-				uni.getStorage({
-					key: "userId",
-					success(res){
-						that.getUserDefault(res.data).then(res1 =>{
-							if(res1){
-								uni.navigateTo({
-									url: '../myData/index?id='+res.data
-								})
-							}else{
-								uni.navigateTo({
-									url: '../choiceField/index?id='+res.data
-								})
-							}
-						})
-					},fail(err){
-						uni.navigateTo({
-							url: '../login/index'
-						})
-					}
-				})
+				let that = this;
+				if(that.auth!= null && that.auth.userId){
+					that.getUserDefault(that.auth.userId).then(res =>{
+						if(res){
+							uni.navigateTo({
+								url: '../myData/index?id='+that.auth.userId
+							})
+						}else{
+							uni.navigateTo({
+								url: '../choiceField/index?id='+that.auth.userId
+							})
+						}
+					})
+				}else {
+					uni.navigateTo({
+						url: '../login/index'
+					})
+				}
 			},
 			/**
 			 * 拉取数据
@@ -244,14 +237,14 @@
 					pageNum: that.page,
 					pageSize: that.size
 				}
-				console.log(params)
 				http.getDomainList(params).then(data => {
 					if(item == 'init') { //初始化
 						that.list = data.articles
 						if(data.articles.length == 0){
 							that.loadingType = 2
-						}else if(that.list.length<=3){
-							that.showLoadType = false
+						}else if(that.list.length <= 3){
+							that.loadingType = 2
+							// that.showLoadType = false
 						}
 						uni.hideLoading()
 					}else if(item == 'refresh'){ //下啦刷新
@@ -267,13 +260,12 @@
 						uni.hideNavigationBarLoading();
 					}else if(item == 'load'){
 						that.list = that.list.concat(data.articles)
-						if(that.list.length == 0){
+						if(data.articles.length == 0){
 							that.loadingType = 2
 							uni.hideNavigationBarLoading();
 							uni.hideLoading()
 							return false
 						}else {
-							
 							that.loadingType = 0;//将loadingType归0重置
 							uni.hideNavigationBarLoading()
 							uni.hideLoading()
@@ -331,8 +323,12 @@
 				font-family:PingFang SC;
 				margin-bottom: 10upx;
 				display: flex;
-				// justify-content: space-between;
 				justify-content: space-around;
+				::-webkit-scrollbar {
+						width: 0;
+						height: 0;
+						background-color: transparent;
+					} 
 				.title-item {
 					font-size: 28upx;
 					margin: 0 25upx;

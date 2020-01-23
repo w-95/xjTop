@@ -21,7 +21,6 @@
 		},
 		watch: {
 			'imgArr': function(newVal){
-				console.log('Jiantin')
 				let that = this
 				that.$nextTick(()=>{
 					console.log('向父组件传递渲染完成')
@@ -30,20 +29,14 @@
 			}
 		},
         data() {
-            return {
-				
-            }
+            return {}
         },
         methods : {
 			clearImg(index){
 				this.$emit('clearImg',index)
 			}
         },
-		onLoad(){
-			
-		}
-		
-		
+		onLoad(){}
     }
 </script>
 

@@ -39,6 +39,14 @@
 				
 			},
 			sendActive(oId){
+				if(this.activeName == ''){
+					uni.showToast({
+						title: '请选择发帖领域!',
+						icon: 'none',
+						duration: 1500
+					})
+					return false
+				}
 				let params = {
 					userId: this.userId,
 					domainId: oId,

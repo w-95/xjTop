@@ -1,6 +1,5 @@
 
 <script>
-	var openId = '',session_key = '';
 	import {
 		mapState,
 		mapMutations
@@ -10,14 +9,57 @@
 	export default {
 		
 		computed: {
-			...mapState(['province', 'auth']),
+			...mapState(['province', 'auth','openData']),
 		},
 		methods: {
-			...mapMutations(['setAuth']),
+			...mapMutations(['setAuth','setOpenData']),
 			setUser(data){
 				this.setAuth(data)
+			},
+			getOpenId(res){
+				let that = this;
+				http.getWxchatOpenid({code: res.code}).then(data =>{
+					console.log('拿code换来的openid===',JSON.stringify(data))
+					that.setOpenData(data)
+					//用户之前同意授权直接登录
+					that.getUserType()
+				})
+			},
+			login(params){
+				let that = this;
+				http.userLogin(params).then(data =>{
+					console.log('初始化登录成功的userid==',data)
+					if(data.code == 0 && data.data){
+						data.data.userUpdateTime = time.formatTime(data.data.userUpdateTime,"Y-M-D h:m:s")
+						that.setUser(data.data)
+					}
+				})
+			},
+			getUserType(){
+				let that = this;
+				uni.getSetting({
+					success: res1 =>{
+						console.log('用户之前是否同意授权==',res1.authSetting['scope.userInfo'])
+						if(res1.authSetting['scope.userInfo']) {//用户是否允许授权
+							uni.getUserInfo({
+								success: res2 =>{
+									let params = {
+										"openId": that.openData.openid,
+										"userName": res2.userInfo.nickName,
+										"phoneNum": '123',
+										"userAvatarURL": res2.userInfo.avatarUrl,
+										"userCity": res2.userInfo.city
+									}
+									that.login(params)
+								},
+							})
+						}
+						
+					}
+				})
 			}
 		},
+		onShow(){},
 		onLaunch: function () {
 			//获取用户信息, 取code
 			let that = this
@@ -26,46 +68,7 @@
 				success: function (res) {
 					//拿code换取openId
 					console.log('登录的code===',res.code)
-					http.getWxchatOpenid({code: res.code}).then(data =>{
-						console.log('拿code换来的openid===',JSON.stringify(data))
-						openId = data.openid
-						session_key = data.session_key
-						uni.setStorage({
-							key: "userData",
-							data: data
-						})
-					})
-					//用户之前同意授权直接登录
-					uni.getSetting({
-						success: res1 =>{
-							console.log('用户之前是否同意授权==',res1.authSetting['scope.userInfo'])
-							if(res1.authSetting['scope.userInfo']) {  //用户是否允许授权
-								uni.getUserInfo({
-									success: res2 =>{
-										let params = {
-											"openId": openId,
-											"userName": res2.userInfo.nickName,
-											"phoneNum": '123',
-											"userAvatarURL": res2.userInfo.avatarUrl,
-											"userCity": res2.userInfo.city
-										}
-										http.userLogin(params).then(data =>{
-											console.log('初始化登录成功的userid==',data.data.userId)
-											if(data.code == 0 && data.data){
-												data.data.userUpdateTime = time.formatTime(data.data.userUpdateTime,"Y-M-D h:m:s")
-												that.setUser(data.data)
-												uni.setStorage({
-													key: "userId",
-													data: data.data.userId
-												})
-											}
-										})
-									},
-								})
-							}
-							
-						}
-					})
+					that.getOpenId(res)
 				}
 			});
 		},

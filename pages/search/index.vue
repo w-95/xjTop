@@ -5,7 +5,7 @@
 			<input class="uni-input" confirm-type='search' placeholder="搜索" @input ="changeInput" v-model="iptVal" :focus ='true'/>
 			<icon type="clear" size="15" color='#CCCCCC' class="right" @click='clearVal'></icon>
 		</view>
-		<Post :deailDataList ='listArr' v-if="listArr.length>0"></Post>
+		<Post :deailDataList ='listArr' v-if="listArr.length>0" :show='true'></Post>
 	</view>
 </template>
 
