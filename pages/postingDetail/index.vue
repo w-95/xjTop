@@ -430,7 +430,7 @@
 				padding: 0 20upx 0 0;
 				justify-content: space-between;
 				box-sizing: border-box;
-				max-width: 150upx;
+				max-width: 200upx;
 				font-family:PingFang SC;
 				font-size: 20upx;
 				color: #888888;

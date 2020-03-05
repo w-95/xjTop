@@ -9,10 +9,20 @@
 					<view class="user-name">
 						<open-data type="userNickName"></open-data>
 					</view>
+					<view class="operation-follow">
+						<button class='add-follow'>+关注</button>
+						<!-- <button class='clean-follow'>取消关注</button> -->
+					</view>
 				</viwe>
 				<view class="text">加入时间: {{auth.userUpdateTime}}{{activeTitleItem}}</view>
 				<view class="my-autograph">
 					“走自己的路让别人跟着走”
+				</view>
+				<view class='follow-type' @click='goFollow'>
+					<view v-for='(item,index) in followTabParams' :key='index'>
+						<text class='follow-left'>{{item.count}}</text>
+						<text class='fans-right'>{{item.name}}</text>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -21,15 +31,16 @@
 				<view v-for="(t, i) in areaTitleList" :key="t.id" :class="activeTitleItem == t.id ? 'title-item active' : 'title-item'"
 					@click="handleColumnTap(t)">
 					<text>{{t.label}}</text>
+					<view class='dot' v-if='t.id == 4'></view>
 				</view>
 			</view>
 		</view>
 		<view v-if='(postArr.length == 0 && activeTitleItem == 1) || (repliesArr.length == 0 && activeTitleItem == 2)' class='tips-box'>{{activeTitleItem == 1 ? '暂无帖子内容':'暂无回帖内容'}}</view>
-		<view class="service-and-specil-a" v-else>
+		<view class="service-and-specil-a" :class="[activeTitleItem == 4 ? 'reset-height' : '']" v-else>
 			<view class="service-column-wrapper animated fadeInLeft" v-if="activeTitleItem == 1">
 				<Post :deailDataList='postArr' :show=true v-if="activeTitleItem == 1"></Post>
 			</view>
-			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem == 2">
+			<view class="service-column-wrapper animated fadeInLeft" v-if="activeTitleItem == 2">
 				<view class='left' v-for='(item,index) in repliesArr' :key='index'>
 					<view class='left-box'>
 						<view class="icon">
@@ -47,7 +58,22 @@
 					<ListBox :listBox='arrData' type='alreadyOpened' v-if="activeTitleItem == 3"></ListBox>
 				</view>
 			</view>
-			<text class="loading-text" v-if='showLoadType'>
+			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem == 4" style='height: 100%'>
+				<view class='system'>
+					<view class='conversation'>
+						<view class='alturl'>
+							<image :src="portrait"></image>
+						</view>
+						<view class='alt-content'>{{customerServiceTips}}</view>
+					</view>
+					<view class='phine-server'>
+						<image src='../../static/images/tips.png'></image>
+						<text>联系客服</text>
+					</view>
+				</view>
+				
+			</view>
+			<text class="loading-text" v-if='showLoadType && activeTitleItem != 4'>
 				{{loadingType === 0 ? contentText.contentdown : (loadingType === 1 ? contentText.contentrefresh : contentText.contentnomore)}}
 			</text>
 		</view>
@@ -57,6 +83,7 @@
 
 <script>
 	import comment from '../../components/comment/index.vue'
+	import d1 from '../../common/data/d1.js'
 	import Post from '../../components/user-post/index.vue'
 	import http from '../../utils/http.js'
 	import time from '../../utils/validate.js'
@@ -73,6 +100,15 @@
 				userData : {},
 				activeTitleItem: 1,
 				arrData:[],
+				followTabParams:[{
+					name: '关注',
+					count: 20,
+					type: 'follow'
+				},{
+					name: '粉丝',
+					count: 20,
+					type: 'fans'
+				}],
 				areaTitleList: [{
 					id: 1,
 					num: 4,
@@ -85,6 +121,10 @@
 					id: 3,
 					num: 20,
 					label: '领域申请'
+				},{
+					id: 4,
+					num: 20,
+					label: '系统消息'
 				}],
 				show: false,
 				page: 1,
@@ -101,6 +141,9 @@
 				    contentnomore: '没有更多数据了' //else
 				},
 				showLoadType: true,
+				portrait: 'https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoEZR8fMGUADxBT0rfnpB5OYJqYsWA4ec8DNl2pH7ibVdjoyuHCzbENZpk7ERW1GiaibNtvyQmwRKltg/132',
+				//客服提示
+				customerServiceTips: '鞋匠云集荟聚鞋业资源,欢迎您开通领域权限,畅享更多鞋业资讯,若有需要了解点击下方【联系客服】'
 			}
 		},
 		components: {
@@ -132,6 +175,14 @@
 			...mapMutations(['setAuth']),
 			commentItem(){
 				
+			},
+			goFollow(){
+				uni.navigateTo({
+					url: '../followTab/index'
+				})
+			},
+			systemMessage(id){
+				this.activeTitleItem = id
 			},
 			// 下拉刷新
 			onPullDownRefresh() {
@@ -291,6 +342,8 @@
 					this.getUserComments(item.id)
 				}else if(item.id == 3) {
 					this.ownDomain(item.id)
+				}else if(item.id == 4){
+					this.systemMessage(item.id)
 				}
 			},
 		}
@@ -355,13 +408,29 @@
 						line-height: 80upx;
 						overflow: hidden;
 					}
-					button {
-						margin-left: 20upx;
-						font-size: 28upx;
-						background: none;
-						color: blue;
-						left: 225upx;
+					.operation-follow{
+						.add-follow{
+							color: white;
+							text-align: center;
+							font-size: 24rpx;
+							background-color: #42E1A4;
+							margin-left: 20upx
+						}
+						.clean-follow{
+							color: white;
+							text-align: center;
+							font-size: 24rpx;
+							background-color: #808080;
+							margin-left: 20upx
+						}
 					}
+					// button {
+					// 	margin-left: 20upx;
+					// 	font-size: 28upx;
+					// 	background: none;
+					// 	color: blue;
+					// 	left: 225upx;
+					// }
 					button::after{ border: none;background: none;}
 					.vip{
 						width: 150upx;
@@ -377,24 +446,51 @@
 					}
 				}
 				.text{
-						background-color: white;
-						display: block;
-						width: 90%;
-						text-align: center;
-						font-size: 24upx;
-						color: #808080;
+					background-color: white;
+					display: block;
+					width: 90%;
+					text-align: center;
+					font-size: 24upx;
+					color: #808080;
+					font-family: PingFang SC;
+				}
+				.my-autograph{
+					background-color: white;
+					width: 90%;
+					text-align: center;
+					font-size: 30upx;
+					font-weight: bold;
+					font-family: PingFang SC;
+				}
+				.follow-type{
+					background-color: white;
+					width: 90%;
+					font-size: 30upx;
+					display: flex;
+					align-items:center;
+					font-family: PingFang SC;
+					view{
+						display: flex;
+						align-items: center;
 					}
-					.my-autograph{
-						background-color: white;
-						width: 90%;
-						text-align: center;
-						font-size: 30upx;
+					view:first-child{
+						margin-left: 115upx;
+					}
+					.follow-left{
 						font-weight: bold;
+						font-family: PingFang SC;
+					}
+					.fans-right{
+						margin-left: 10upx;
+						margin-right: 20upx;
+						font-weight: 300;
+						color: #808080;
+						font-size: 22upx;
+						font-family: PingFang SC;
 					}
 				}
 			}
-			
-		
+		}
 		@keyframes fadeInRight {
 			from {
 				opacity: 0;
@@ -443,6 +539,14 @@
 		padding: 0 20upx;
 		box-sizing: border-box;
 	}
+	.reset-height{
+		width: 100%;
+		position:absolute;
+		top: 430upx;
+		box-sizing: border-box;
+		left: 0;
+		bottom: 0;
+	}
 	.service-and-specil {
 		background-color: white;
 		width: 90%;
@@ -459,6 +563,7 @@
 			display: flex;
 			justify-content: space-between;
 			.title-item {
+				position:relative;
 				font-size: 32upx;
 				font-weight: 600;
 				color: #656565;
@@ -472,10 +577,20 @@
 				&:first-child {
 					// margin-right: 62upx;
 				}
+				.dot{
+					width: 30upx;
+					height: 30upx;
+					position: absolute;
+					background-image: url('../../static/images/dot.png');
+					background-repeat: no-repeat;
+					top: -6upx;
+					right: -12upx;
+				}
 			}
 		}
 		.service-column-wrapper {
 			width: 100%;
+			height: 100%;
 			border-top: 1px solid #EEEEEE;
 			box-sizing: border-box;
 			padding: 0 20upx;
@@ -708,6 +823,50 @@
 					transform:rotate(90deg);
 					width: 60upx;
 					height: 60upx;
+				}
+			}
+		}
+		.system{
+			height: 100%;
+			background-color:#f6f6f6;
+			.conversation{
+				width: 100%;
+				padding: 40upx;
+				display: flex;
+				box-sizing: border-box;
+				.alturl{
+					width: 65upx;
+					height: 65upx;
+					border-radius: 50%;
+					overflow: hidden;
+					margin-right: 30upx;
+					image{
+						width: 65upx;
+						height: 65upx;
+					}
+				}
+				.alt-content{
+					width: 72%;
+					background-color:white;
+					padding: 15upx 30upx 15upx 15upx;
+					border-radius: 8upx;
+					font-size: 27upx;
+				}
+			}
+			.phine-server{
+				position: fixed;
+				bottom: 0;
+				width: 100%;
+				background-color: white;
+				display: flex;
+				justify-content: center;
+				font-size: 24upx;
+				font-family: PingFang SC;
+				padding: 20upx 0;
+				image{
+					width: 35rpx;
+					height: 35rpx;
+					margin-right: 20rpx;
 				}
 			}
 		}

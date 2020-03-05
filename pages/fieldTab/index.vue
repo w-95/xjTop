@@ -28,6 +28,7 @@
 		<view class="my-data" @click="goMyDetail">
 			<image src="../../static/images/login.png" mode=""></image>
 			<view>我的</view>
+			<view class='dot'></view>
 		</view>
 		<view class="is-domain" @click="choiceField">
 			<!-- <image src="../../static/images/bianji.png" mode=""></image> -->
@@ -470,6 +471,15 @@
 			margin: 7upx 0 0upx 0;
 			width: 40upx;
 			height: 40upx;
+		}
+		.dot{
+			width: 30upx;
+			height: 30upx;
+			position: absolute;
+			background-image: url('../../static/images/dot.png');
+			background-repeat: no-repeat;
+			top: -6upx;
+			right: 18upx;
 		}
 	}
 	.is-domain{

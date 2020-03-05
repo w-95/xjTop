@@ -1,32 +1,21 @@
 <template>
 	<view class='box-item'>
-		<view v-for='(item,index) in listBox' :key='index' class='list-box'>
+		<view v-for='(item,index) in listBox' :key='index' class='list-box' @click='goOpenArea(item)'>
 			<view class='logo-icon'>
-				<image :src="auth.userAvatarURL" mode="widthFix"></image>
+				<image :src="item.url" mode="widthFix"></image>
 			</view>
 			<view class='content-item'>
 				<view class='title'>
-					<text>{{auth.userName}}</text>
-					<view>申请：{{item.userCreateTime}}</view>
-					<!-- <view>开通：{{item.userEndTime}}</view> -->
-				</view>
-				<view class='title-bom'>
-					<text>{{item.domainURI}}</text>
+					<text>{{item.name}}</text>
 				</view>
 			</view>
-			<view class='right-tong' v-if="type == 'alreadyOpened'">
-				<image src="../../../static/images/tong.png" mode="widthFix" v-show='!item.isExpired && item.isOnline == 0'></image>
-				<image src="../../../static/images/no-tong.png" mode="widthFix" v-show='item.isExpired'></image>
-			</view>
+			<image src="../../../static/images/right.png" mode="widthFix" class='right-item'></image>
 		</view>
 	</view>
 </template>
 
 <script>
-	import {
-		mapState,
-		mapMutations
-	} from 'vuex';
+	import {mapState,mapMutations} from 'vuex';
 	export default {
 		data() {
 			return {}
@@ -44,14 +33,16 @@
 		components: {},
 		onLoad(e) {},
 		created(){
-			console.log(this.listBox)
+			
 		},
 		onReady() {},
 		computed: {
-			...mapState(['province', 'auth']),
+			
 		},
 		onShow() {},
-		methods: {}
+		methods: {
+			
+		}
 	}
 </script>
 
@@ -62,7 +53,7 @@
 		.list-box{
 			// width: 100%;
 			box-sizing: border-box;
-			padding: 20upx;
+			padding: 10upx 20upx;
 			display: flex;
 			align-items: center;
 			justify-content:space-between;
@@ -78,12 +69,12 @@
 				}
 			}
 			.content-item{
-				width: 65%;
+				width: 70%;
 				box-sizing: border-box;
 				padding: 20upx;
 				display: flex;
 				justify-content: space-between;
-				align-items:center;
+				align-items: center;
 				.title{
 					font-family:PingFang SC;
 					font-size: 24upx;
@@ -93,32 +84,22 @@
 						color: #C3C3C3;
 						display: flex;
 						justify-content: space-between;
-						margin-top: 20upx;
+						margin-top: 10upx;
+					}
+					.end{
+						margin-top: 3upx;
 					}
 				}
 				.title-bom{
 					font-family:PingFang SC;
 					font-size: 24upx;
+					min-width: 130upx;
 					text-align: center;
-					min-width: 80upx;
 				}
 			}
 			.right-item{
-				width: 100upx;
-				font-family:PingFang SC;
-				font-size: 24upx;
-				color: #1296db;
-				display: flex;
-				align-items:center;
-				image{
-					width: 30upx;
-					height: auto;
-				}
-			}
-			.right-tong{
-				image{
-					width: 60upx;
-				}
+				width: 30upx;
+				height: auto;
 			}
 		}
 	}

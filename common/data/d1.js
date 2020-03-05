@@ -109,14 +109,21 @@ export const phones = {
 	}]
 };
 //七牛图片域名
-export const QiNiuImgDomainName = 'http://xjm.cachito.top/'
+export const QiNiuImgDomainName = 'http://xjm.cachito.top/';
 //腾讯SDK获取位置
-export const QQSDK = 'S57BZ-S4J66-YBRS5-M3SB6-PL6PZ-JEF2M'
+export const QQSDK = 'S57BZ-S4J66-YBRS5-M3SB6-PL6PZ-JEF2M';
 //获取七牛的
-export const bucketName = 'xiejiang'
+export const bucketName = 'xiejiang';
+//测试头像
+export const portrait = 'https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoEZR8fMGUADxBT0rfnpB5OYJqYsWA4ec8DNl2pH7ibVdjoyuHCzbENZpk7ERW1GiaibNtvyQmwRKltg/132';
+//客服提示
+export const CustomerServiceTips = '鞋匠云集荟聚鞋业资源,欢迎您开通领域权限,畅享更多鞋业资讯,若有需要了解点击下方【联系客服】'
 export default {
 	phones,
 	QiNiuImgDomainName,
 	QQSDK,
-	bucketName
+	bucketName,
+	portrait,
+	CustomerServiceTips
 }
+

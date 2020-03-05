@@ -6,7 +6,12 @@
 				"enablePullDownRefresh": true
 			}
 		},
-		
+		{
+			"path": "pages/followTab/index",
+			"style": {
+				"enablePullDownRefresh": true
+			}
+		},
 		{
 			"path": "pages/openArea/index",
 			"style": {}

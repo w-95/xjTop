@@ -4,7 +4,6 @@
 			<icon type="search" size="15" color='#999999'></icon>
 			<input class="uni-input" confirm-type='search' placeholder="搜索" @input ="changeInput" @click='getFocus' :focus="false" disabled=true/>
 			<button type="primary" @click='goMember' class='juris-diction-btn' v-if="auth!=null && auth.userRole == 'adminRole'">权限</button>
-			<!-- <button type="primary" @click='goMember' class='juris-diction-btn'>权限</button> -->
 		</view>
 		<view class="title" v-if="doMainData.length > 0">
 			<view></view>
@@ -12,10 +11,11 @@
 		</view>
 		<view class="banner"  v-if="doMainData.length > 0">
 			<view class="item" v-for="(item,index) in doMainData" :key='index' @click="detail(item)">
-				<view>
+				<view class='child'>
 					<image :src="item.domainIconPath" mode="widthFix"></image>
 				</view>
 				<text>{{item.domainTitle}}</text>
+				<view class='dot'></view>
 			</view>
 		</view>
 		<view class="title" v-if="officeArr.length>0">
@@ -40,6 +40,7 @@
 		<view class="my-data" @click="goMyDetail">
 			<image src="../../static/images/login.png" mode=""></image>
 			<view>我的</view>
+			<view class='dot'></view>
 		</view>
 		<view class="is-domain" @click="choiceField">
 			<!-- <image src="../../static/images/bianji.png" mode=""></image> -->
@@ -276,11 +277,14 @@
 			//用户是否选择默认领域
 			getUserDefault(userid){
 				return http.getUserList({userId: userid}).then(data => {
-					for(let i of data.data){
-						if(!i.isExpired){ //设置了权限
-							return true
-						}
+					if(data.data.length > 0){
+						return true
 					}
+					// for(let i of data.data){
+					// 	if(!i.isExpired){ //设置了权限
+					// 		return true
+					// 	}
+					// }
 					return false
 				})
 				
@@ -420,10 +424,11 @@
 			border-bottom: 1px solid #EEEEEE;
 			.item{
 				width: 25%;
+				position:relative;
 				margin-bottom: 30upx;
 				font-family:PingFang SC;
 				text-align: center;
-				view{
+				.child{
 					width: 70%;
 					padding: 20upx;
 					font-family:PingFang SC;
@@ -441,6 +446,15 @@
 						width: 95upx;
 						height: auto;
 					}
+				}
+				.dot{
+					width: 30upx;
+					height: 30upx;
+					position: absolute;
+					background-image: url('../../static/images/dot.png');
+					background-repeat: no-repeat;
+					top: -6upx;
+					right: 25upx;
 				}
 				text{
 					color: #666666;
@@ -468,6 +482,15 @@
 				margin: 7upx 0 0upx 0;
 				width: 40upx;
 				height: 40upx;
+			}
+			.dot{
+				width: 30upx;
+				height: 30upx;
+				position: absolute;
+				background-image: url('../../static/images/dot.png');
+				background-repeat: no-repeat;
+				top: -6upx;
+				right: 18upx;
 			}
 		}
 		.is-domain{
