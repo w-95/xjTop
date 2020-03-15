@@ -1,0 +1,191 @@
+.index-page {
+		width: 750upx;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+		box-sizing: border-box;
+		.box{
+			width: 684upx;
+			display: flex;
+			margin-top: 30upx;
+			align-items: center;
+			font-family:PingFang SC;
+			padding: 10upx;
+			.juris-diction-btn{
+				font-size:24upx;
+				font-family:PingFang SC;
+				margin-left: 20upx;
+				width: 190upx;
+				height: 72upx;
+				line-height: 72upx;
+				border: none;
+				background-color: #2EE3A5;
+			}
+			.juris-diction-btn::after{ border: none;} 
+			.uni-input{
+				width: 100%;
+				height: 72upx;
+				font-size: 24upx;
+				border:1px solid rgba(238,238,238,1);
+				padding: 0 30upx 0 70upx;
+				border-radius:12upx;
+				font-family:PingFang SC;
+				color:rgba(153,153,153,1);
+				background:rgba(246,246,246,1);
+			}
+			icon{
+				position: absolute;
+				color: #999999;
+				font-family:PingFang SC;
+				left: 55upx;
+			}
+		}
+		.title{
+			width: 100%;
+			font-size: 32upx;
+			font-family:PingFang SC;
+			font-weight: bold;
+			padding: 30upx 0 30upx 30upx;
+			box-sizing: border-box;
+			display: flex;
+			align-items: center;
+			view{
+				width: 10upx;
+				height: 30upx;
+				background-color: #42E1A4;
+				margin-right: 20upx;
+			}
+		}
+		.tips{
+			margin: 0 auto;
+			margin-top: 280upx;
+			margin-bottom: 480upx;
+			image{
+				width: 100%;
+				height:auto;
+			}
+			view{
+				width: 750upx;
+				margin-top: 50upx;
+				text-align: center;
+				font-size: 40upx;
+				font-family:PingFang SC;
+				font-weight: bold;
+				width: 100%;
+			}
+		}
+		.loading-text{
+				height: 80upx;
+				line-height: 80upx;
+				font-size: 30upx;
+				display: flex;
+				font-family:PingFang SC;
+				flex-direction: row;
+				justify-content: space-around;
+			}
+		.banner{
+			width: 660upx;
+			padding: 20upx 40upx;
+			display: flex;
+			font-family:PingFang SC;
+			flex-wrap: wrap;
+			font-size: 24upx;
+			border-bottom: 1px solid #EEEEEE;
+			.item{
+				width: 25%;
+				position:relative;
+				margin-bottom: 30upx;
+				font-family:PingFang SC;
+				text-align: center;
+				.child{
+					width: 70%;
+					padding: 20upx;
+					font-family:PingFang SC;
+					box-sizing: border-box;
+					background-color: #EEEEEE;
+					height: 100upx;	
+					margin: 0 auto;
+					border-radius: 10upx;
+					overflow: hidden;
+					text-align: center;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					image{
+						width: 95upx;
+						height: auto;
+					}
+				}
+				.dot{
+					width: 30upx;
+					height: 30upx;
+					position: absolute;
+					background-image: url('../../static/images/dot.png');
+					background-repeat: no-repeat;
+					top: -6upx;
+					right: 25upx;
+				}
+				text{
+					color: #666666;
+					font-family:PingFang SC;
+					display: inline-block;
+					padding: 10upx 0;
+				}
+			}
+		}
+		.my-data{
+			position: fixed;
+			right: 50upx;
+			bottom: 200upx;
+			width: 80upx;
+			font-family:PingFang SC;
+			height: 80upx;
+			border: 1px solid #D3D3D3;
+			border-radius: 25%;
+			font-size: 20upx;
+			text-align: center;
+			background-color: white;
+			// padding: 10upx 10upx;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, .19), inset 0 1px 0 rgba(255, 255, 255, .4);
+			image{
+				margin: 7upx 0 0upx 0;
+				width: 40upx;
+				height: 40upx;
+			}
+			.dot{
+				width: 30upx;
+				height: 30upx;
+				position: absolute;
+				background-image: url('../../static/images/dot.png');
+				background-repeat: no-repeat;
+				top: -6upx;
+				right: 18upx;
+			}
+		}
+		.is-domain{
+			// font-family:PingFang SC;
+			position: fixed;
+			right: 50upx;
+			bottom: 80upx;
+			width: 80upx;
+			height: 80upx;
+			border-radius: 25%;
+			overflow: hidden;
+			box-sizing: border-box;
+			font-size: 20upx;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background-color: #2EE3A5;
+			background-image: url('../../static/images/bianji.png');
+			background-size: 100% 100%;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, .19), inset 0 1px 0 rgba(255, 255, 255, .4);
+			image{
+				width: 100%;
+				height: 80rpx;
+			}
+		}
+	}

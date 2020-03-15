@@ -1,0 +1,160 @@
+.box{
+		box-sizing: border-box;
+		.tipss{
+			margin: 0 auto;
+			margin-top: 280upx;
+			text-align: center;
+			image{
+				width: 40%;
+				height:auto;
+			}
+			view{
+				width: 750upx;
+				margin-top: 50upx;
+				text-align: center;
+				font-size: 30upx;
+				font-family:PingFang SC;
+				font-weight: bold;
+				width: 100%;
+			}
+		}
+		.loading-text{
+			height: 80upx;
+			line-height: 80upx;
+			font-size: 30upx;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+			}
+		.left{
+			padding: 40upx 20upx;
+			.left-box{
+				margin-left: 10upx;
+				display: flex;
+				align-items: center;
+				color: #656565;
+				font-size: 24upx;
+				box-sizing: border-box;
+				.icon{
+					width: 30upx;
+					height: 30upx;
+					border: 1px solid white;
+					border-radius: 50%;
+					margin-right: 15upx;
+					overflow: hidden;
+					background-image: url('../../static/images/gongren.png');
+					background-size: 100% 100%;
+				}
+			}
+			.content{
+				display: flex;
+				align-items: center;
+				font-size: 28upx;
+				box-sizing: border-box;
+				word-wrap:break-word; 
+				word-break:break-all;
+				overflow: hidden;
+				margin-left: 60upx;
+				justify-content: space-between;
+				image{
+					transform:rotate(90deg);
+					width: 60upx;
+					height: 60upx;
+					
+				}
+			}
+		}
+		.right{
+			background-color: #EEEEEE;
+			box-sizing: border-box;
+			border-radius: 10upx;
+			margin-top: 40upx;
+			margin-left: 60upx;
+			padding: 40upx 40upx;
+			margin-right: 40upx;
+			.left-box{
+				margin-left: 10upx;
+				display: flex;
+				align-items: center;
+				color: #656565;
+				font-size: 24upx;
+				box-sizing: border-box;
+				.icon{
+					width: 30upx;
+					height: 30upx;
+					border: 1px solid white;
+					border-radius: 50%;
+					margin-right: 15upx;
+					overflow: hidden;
+					background-image: url('../../static/images/gongren.png');
+					background-size: 100% 100%;
+				}
+			}
+			.content{
+				display: flex;
+				align-items: center;
+				font-size: 28upx;
+				box-sizing: border-box;
+				word-wrap:break-word; 
+				word-break:break-all;
+				overflow: hidden;
+				justify-content: space-between;
+				image{
+					transform:rotate(90deg);
+					width: 60upx;
+					height: 60upx;
+					
+				}
+			}
+		}
+		.height{
+			width: 750upx;
+			height: 100upx
+		}
+		.position{
+			font-family:PingFang SC;
+			position: fixed;
+			bottom: 120upx;
+			display: flex;
+			align-items: center;
+			padding: 10upx;
+			box-sizing: border-box;
+			width: 150upx;
+			border: 1px solid #EEEEEE;
+			border-radius: 8upx;
+			font-size: 24upx;
+			background-color: white;
+			image{
+				width: 30upx;
+				height: 30upx;
+			}
+		}
+		.bottom{
+			font-family:PingFang SC;
+			position: fixed;
+			box-sizing: border-box;
+			width: 750upx;
+			bottom: 0;
+			background-color: white;
+			display: flex;
+			align-items:center;
+			justify-content: center;
+			border-top: 1px solid #CCCCCC;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, .19), inset 0 1px 0 rgba(255, 255, 255, .4);
+			padding: 20upx 0;
+			.uni-input{
+				width: 450upx;
+				background-color: #EEEEEE;
+				font-size: 24upx;
+				border-radius: 10upx;
+				line-height: 40upx;
+				padding: 20upx 20upx 10upx 20upx;
+				margin-left: 50upx;
+			}
+			button{
+				font-size: 24upx;
+				height: 60upx;
+				width: 130upx;
+			}
+		}
+	}

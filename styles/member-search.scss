@@ -1,0 +1,219 @@
+.box{
+	box-sizing: border-box;
+	.tips-box{
+		box-sizing: border-box;
+		width: 750upx;
+		height: 400upx;
+		font-size: 28upx;
+		text-align: center;
+		display: flex;
+		justify-content:center;
+		align-items: center;
+		font-weight: bold;
+	}
+	.service-and-specil {
+		background-color: white;
+		width: 90%;
+		margin: 0 auto;
+		margin-top: 0upx;
+		box-sizing: border-box;
+		// padding: 0 20upx;
+		.uni-input{
+			width: 100%;
+			margin: 0 auto;
+			height: 72upx;
+			box-sizing: border-box;
+			font-size: 24upx;
+			padding: 0 40upx;
+			margin-top: 40upx;
+			border:1px solid rgba(238,238,238,1);
+			border-radius:12upx;
+			font-family:PingFang SC;
+			color:rgba(153,153,153,1);
+			// background:rgba(246,246,246,1);
+		}
+		.title-box {
+			width: 100%;
+			display: flex;
+			padding: 0 32upx;
+			box-sizing: border-box;
+			margin-bottom: 10upx;
+			display: flex;
+			justify-content: space-between;
+			.title-item {
+				font-size: 32upx;
+				font-weight: 600;
+				color: #656565;
+				padding-bottom: 14upx;
+				line-height: 45upx;
+				&.active {
+					font-size: 36upx;
+					color: #333333;
+					border-bottom: 3px #007BFB solid;
+				}
+				&:first-child {
+					// margin-right: 62upx;
+				}
+			}
+		}
+		.service-column-wrapper {
+			width: 100%;
+			box-sizing: border-box;
+			.tipss{
+				margin: 0 auto;
+				margin-top: 280upx;
+				text-align: center;
+				image{
+					width: 40%;
+					height:auto;
+				}
+				view{
+					width: 750upx;
+					margin-top: 50upx;
+					text-align: center;
+					font-size: 30upx;
+					font-family:PingFang SC;
+					font-weight: bold;
+					width: 100%;
+				}
+			}
+			.user-list{
+				width: 684upx;
+				display: flex;
+				margin-top: 30upx;
+				justify-content: space-between;
+				align-items: center;
+				font-family:PingFang SC;
+				padding: 10upx;
+				.right-item{
+					width: 30upx;
+					height: auto;
+				}
+				.user-text{
+					color: #1296db;
+					font-size: 24upx;
+				}
+				.juris-diction-btn{
+					font-size:24upx;
+					font-family:PingFang SC;
+					margin-left: 20upx;
+					width: 190upx;
+					height: 72upx;
+					line-height: 72upx;
+					border: none;
+					background-color: #2EE3A5;
+				}
+				.juris-diction-btn::after{ border: none;} 
+				.uni-input{
+					width: 76%;
+					height: 72upx;
+					font-size: 24upx;
+					border:1px solid rgba(238,238,238,1);
+					padding: 0 30upx 0 70upx;
+					border-radius:12upx;
+					font-family:PingFang SC;
+					color:rgba(153,153,153,1);
+					background:rgba(246,246,246,1);
+					margin:0
+				}
+				icon{
+					position: absolute;
+					color: #999999;
+					font-family:PingFang SC;
+					left: 55upx;
+				}
+			}
+		}
+	}	
+	.animated {
+		.left{
+			padding: 40upx 20upx;
+			border-bottom: 20rpx solid #f7f7f7;
+			.left-box{
+				margin-left: 10upx;
+				display: flex;
+				align-items: center;
+				color: #656565;
+				font-size: 24upx;
+				box-sizing: border-box;
+				.icon{
+					width: 30upx;
+					height: 30upx;
+					border: 1px solid white;
+					border-radius: 50%;
+					margin-right: 15upx;
+					overflow: hidden;
+					image{
+						width: 30upx;
+						height: 30upx;
+					}
+				}
+			}
+			.toast{
+				height: 60rpx;
+				width: 250upx;
+				position: relative;
+				display: table;
+				text-align: center;
+				border-radius: 5px;
+				background-color: #000;
+				opacity: 0.7;
+				top: -57upx;
+				left: 380upx;
+				color: white;
+				font-size: 24upx;
+				padding: 10upx 10upx;
+				display: flex;
+				align-items: center;
+				justify-content: space-around;
+				float: left;
+				view{
+					display: flex;
+					align-items:center;
+					justify-content: space-between;
+				}
+				image{
+					width:40upx;
+					height: 40upx;
+					margin-right: 10upx;
+				}
+			}
+			.toast:after{
+				content: '';
+				display: block;
+				width: 0;
+				height: 0;
+				border: 6px solid transparent;
+				position: absolute;
+				top: 9px;
+				border-left: 8px solid #000;
+				right: -14px;	
+			}
+			.content{
+				display: flex;
+				align-items: center;
+				font-size: 28upx;
+				box-sizing: border-box;
+				word-wrap:break-word; 
+				word-break:break-all;
+				overflow: hidden;
+				// margin-left: 60upx;
+				padding: 0 30upx 0 20upx;
+				justify-content: space-between;
+				image{
+					transform:rotate(90deg);
+					width: 60upx;
+					height: 60upx;
+				}
+			}
+		}
+	}
+}
+.loading-text{
+	height: 80upx;
+	line-height: 80upx;
+	font-size: 30upx;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+}

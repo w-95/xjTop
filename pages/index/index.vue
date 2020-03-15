@@ -3,7 +3,8 @@
 		<view class="box">
 			<icon type="search" size="15" color='#999999'></icon>
 			<input class="uni-input" confirm-type='search' placeholder="搜索" @input ="changeInput" @click='getFocus' :focus="false" disabled=true/>
-			<button type="primary" @click='goMember' class='juris-diction-btn' v-if="auth!=null && auth.userRole == 'adminRole'">权限</button>
+			<!-- <button type="primary" @click='goMember' class='juris-diction-btn' v-if="auth!=null && auth.userRole == 'adminRole'">管理员</button> -->
+			<button type="primary" @click='goMember' class='juris-diction-btn'>管理员</button>
 		</view>
 		<view class="title" v-if="doMainData.length > 0">
 			<view></view>
@@ -15,7 +16,7 @@
 					<image :src="item.domainIconPath" mode="widthFix"></image>
 				</view>
 				<text>{{item.domainTitle}}</text>
-				<view class='dot'></view>
+				<view class='dot' v-if='item.isNews'></view>
 			</view>
 		</view>
 		<view class="title" v-if="officeArr.length>0">
@@ -78,7 +79,46 @@
 				showLoadType: true,
 				//是否显示暂无数据
 				showNullTips: false,
-				isInitLoading: true
+				isInitLoading: true,
+				//进入领域的时间戳
+				itemFieldTime: {
+					shoesFactory: {      //高端鞋厂
+						time: '',
+						title: '高端鞋厂'
+					},
+					shoesMaterial: {     //鞋材企业
+						time: '',
+						title: '鞋材企业'
+					},
+					shoesMachine: {      //鞋机企业
+						time: '',
+						title: '鞋机企业'
+					},
+					machining: {         //外协加工
+						time: '',
+						title: '外协加工'
+					},
+					foreignTrade: {      //外贸公司
+						time: '',
+						title: '外贸公司'
+					},
+					wholesale: {         //国内批发
+						time: '',
+						title: '国内批发'
+					},
+					onlineRetailers: {   //电商
+						time: '',
+						title: '电商'
+					},
+					stock: {             //库存买卖
+						time: '',
+						title: '库存买卖'
+					},
+					personnel: {  //技术人才
+						time: '',
+						title: '技术人才'
+					}        
+				}
 			}
 		},
 		components: {
@@ -111,7 +151,7 @@
 			that.loadingType = 1;
 			uni.showNavigationBarLoading();//显示加载动画
 			that.page++
-			that.getIndexParams('load')
+			// that.getIndexParams('load')
 		},
 		onReady() {},
 		computed: {
@@ -124,21 +164,21 @@
 		    }
 		 },
 		created(){
-			this.init('init')
-			
+			// this.init('init')
 		},
 		onShow() {
 			let that = this
-			uni.onNetworkStatusChange(function (res) {
-			    if(!res.isConnected) {
-					uni.hideLoading()
-					uni.showToast({
-						title: '当前无网络连接',
-						icon: 'none'
-					})
-					that.showNullTips = true
-				}
-			});
+			that.init('init')
+			// uni.onNetworkStatusChange(function (res) {
+			//     if(!res.isConnected) {
+			// 		uni.hideLoading()
+			// 		uni.showToast({
+			// 			title: '当前无网络连接',
+			// 			icon: 'none'
+			// 		})
+			// 		that.showNullTips = true
+			// 	}
+			// });
 		},
 		methods: {
 			init(type){
@@ -152,8 +192,61 @@
 					icon: 'loading'
 				});
 				that.show = true
-				that.getDomain()
+				that.searchDomainNews()
+				
 				that.getListName(type)
+			},
+			//查询领域是否有新帖子
+			searchDomainNews(){
+				let that = this;
+				uni.getStorage({
+					key: "domainNews",
+					success(e){
+						that.itemFieldTime= e.data
+						that.getDomain(e.data)
+					},
+					fail(){
+						that.getDomain()	
+					}
+				})
+			},
+			//存储每次进入领域的时间戳
+			isNews(val){
+				let that = this;
+				switch(val.domainType) {
+				    case '高端鞋厂':
+						that.itemFieldTime.shoesFactory.time = val.time
+				        break;
+				    case '鞋材企业':
+				        that.itemFieldTime.shoesMaterial.time = val.time
+				        break;
+					case '鞋机企业':
+						that.itemFieldTime.shoesMachine.time = val.time
+					    break;
+					case '外协加工':
+					    that.itemFieldTime.machining.time = val.time
+					    break;
+					case '外贸公司':
+						that.itemFieldTime.foreignTrade.time = val.time
+				        break;
+				    case '国内批发':
+				        that.itemFieldTime.wholesale.time = val.time
+				        break;
+					case '电商':
+						that.itemFieldTime.onlineRetailers.time = val.time
+					    break;
+					case '库存买卖':
+					    that.itemFieldTime.stock.time = val.time
+					    break;
+					case '技术人才':
+						that.itemFieldTime.personnel.time = val.time
+					    break;
+				    default:
+				}
+				uni.setStorage({
+					key: "domainNews",
+					data: that.itemFieldTime
+				})
 			},
 			goMember(){
 				let that = this
@@ -187,7 +280,7 @@
 				http.getIndexComment(params).then(data =>{
 					that.isInitLoading = false
 					if(type == 'refresh'){
-						that.newCommenArr = data.articles
+						// that.newCommenArr = data.articles
 						uni.hideNavigationBarLoading();//关闭动画
 						uni.stopPullDownRefresh();//得到数据后停止下拉刷新
 						uni.hideLoading()
@@ -210,10 +303,10 @@
 							uni.hideLoading()
 							return false
 						}else {
-							let arr = that.newCommenArr.concat(data.articles)
-							that.$nextTick(() => {
-								that.newCommenArr = arr
-							})
+							// let arr = that.newCommenArr.concat(data.articles)
+							// that.$nextTick(() => {
+							// 	that.newCommenArr = arr
+							// })
 							if(data.articles.length > 0 && data.articles.length < 10) {
 								that.loadingType = 2
 							}else {
@@ -231,7 +324,7 @@
 						}else if(data.articles.length > 0 && data.articles.length < 10) {
 							this.loadingType = 2
 						}
-						that.newCommenArr = data.articles
+						// that.newCommenArr = data.articles
 					}
 					
 				})
@@ -245,10 +338,14 @@
 					this.officeArr = data
 					this.isInitLoading = false
 				})
-				this.getIndexParams(type)
+				// this.getIndexParams(type)
 			},
 			//领域详情
 			detail(e){
+				this.isNews({
+					domainType: e.domainTitle,
+					time: new Date().getTime()
+				})
 				uni.navigateTo({
 					url: '../fieldTab/index?domainTitke='+e.domainTitle
 				})
@@ -290,12 +387,29 @@
 				
 			},
 			//获取领域列表
-			getDomain(){
+			getDomain(val){
 				let that = this
 				http.getUserList({userId: ''}).then(data => {
 					if(data.code == 0){
 						that.doMainData = data.data
 						that.isInitLoading = false
+						if(!val){
+							for(let i of data.data){
+								i.isNews = true
+							}
+						}else {
+							for(let i in val){
+								for(let j of data.data){
+									if(val[i].title == j.domainTitle && val[i].time == ''){
+										j.isNews = true
+									}
+									if(val[i].title == j.domainTitle && val[i].time!= '' && j.latestTime > val[i].time){
+										j.isNews = true
+									}
+								}
+							}
+						}
+						uni.hideLoading()
 					}
 					
 				})
@@ -326,195 +440,5 @@
 </script>
 
 <style lang="scss" scoped>
-	.index-page {
-		width: 750upx;
-		overflow: hidden;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		position: relative;
-		box-sizing: border-box;
-		.box{
-			width: 684upx;
-			display: flex;
-			margin-top: 30upx;
-			align-items: center;
-			font-family:PingFang SC;
-			padding: 10upx;
-			.juris-diction-btn{
-				font-size:24upx;
-				font-family:PingFang SC;
-				margin-left: 20upx;
-				width: 140upx;
-				height: 72upx;
-				line-height: 72upx;
-				border: none;
-				background-color: #2EE3A5;
-			}
-			.juris-diction-btn::after{ border: none;} 
-			.uni-input{
-				width: 100%;
-				height: 72upx;
-				font-size: 24upx;
-				border:1px solid rgba(238,238,238,1);
-				padding: 0 30upx 0 70upx;
-				border-radius:12upx;
-				font-family:PingFang SC;
-				color:rgba(153,153,153,1);
-				background:rgba(246,246,246,1);
-			}
-			icon{
-				position: absolute;
-				color: #999999;
-				font-family:PingFang SC;
-				left: 55upx;
-			}
-		}
-		.title{
-			width: 100%;
-			font-size: 32upx;
-			font-family:PingFang SC;
-			font-weight: bold;
-			padding: 30upx 0 30upx 30upx;
-			box-sizing: border-box;
-			display: flex;
-			align-items: center;
-			view{
-				width: 10upx;
-				height: 30upx;
-				background-color: #42E1A4;
-				margin-right: 20upx;
-			}
-		}
-		.tips{
-			margin: 0 auto;
-			margin-top: 280upx;
-			margin-bottom: 480upx;
-			image{
-				width: 100%;
-				height:auto;
-			}
-			view{
-				width: 750upx;
-				margin-top: 50upx;
-				text-align: center;
-				font-size: 40upx;
-				font-family:PingFang SC;
-				font-weight: bold;
-				width: 100%;
-			}
-		}
-		.loading-text{
-				height: 80upx;
-				line-height: 80upx;
-				font-size: 30upx;
-				display: flex;
-				font-family:PingFang SC;
-				flex-direction: row;
-				justify-content: space-around;
-			}
-		.banner{
-			width: 660upx;
-			padding: 20upx 40upx;
-			display: flex;
-			font-family:PingFang SC;
-			flex-wrap: wrap;
-			font-size: 24upx;
-			border-bottom: 1px solid #EEEEEE;
-			.item{
-				width: 25%;
-				position:relative;
-				margin-bottom: 30upx;
-				font-family:PingFang SC;
-				text-align: center;
-				.child{
-					width: 70%;
-					padding: 20upx;
-					font-family:PingFang SC;
-					box-sizing: border-box;
-					background-color: #EEEEEE;
-					height: 100upx;	
-					margin: 0 auto;
-					border-radius: 10upx;
-					overflow: hidden;
-					text-align: center;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					image{
-						width: 95upx;
-						height: auto;
-					}
-				}
-				.dot{
-					width: 30upx;
-					height: 30upx;
-					position: absolute;
-					background-image: url('../../static/images/dot.png');
-					background-repeat: no-repeat;
-					top: -6upx;
-					right: 25upx;
-				}
-				text{
-					color: #666666;
-					font-family:PingFang SC;
-					display: inline-block;
-					padding: 10upx 0;
-				}
-			}
-		}
-		.my-data{
-			position: fixed;
-			right: 50upx;
-			bottom: 200upx;
-			width: 80upx;
-			font-family:PingFang SC;
-			height: 80upx;
-			border: 1px solid #D3D3D3;
-			border-radius: 25%;
-			font-size: 20upx;
-			text-align: center;
-			background-color: white;
-			// padding: 10upx 10upx;
-			box-shadow: 0 1px 3px rgba(0, 0, 0, .19), inset 0 1px 0 rgba(255, 255, 255, .4);
-			image{
-				margin: 7upx 0 0upx 0;
-				width: 40upx;
-				height: 40upx;
-			}
-			.dot{
-				width: 30upx;
-				height: 30upx;
-				position: absolute;
-				background-image: url('../../static/images/dot.png');
-				background-repeat: no-repeat;
-				top: -6upx;
-				right: 18upx;
-			}
-		}
-		.is-domain{
-			// font-family:PingFang SC;
-			position: fixed;
-			right: 50upx;
-			bottom: 80upx;
-			width: 80upx;
-			height: 80upx;
-			border-radius: 25%;
-			overflow: hidden;
-			box-sizing: border-box;
-			font-size: 20upx;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			background-color: #2EE3A5;
-			background-image: url('../../static/images/bianji.png');
-			background-size: 100% 100%;
-			box-shadow: 0 1px 3px rgba(0, 0, 0, .19), inset 0 1px 0 rgba(255, 255, 255, .4);
-			image{
-				width: 100%;
-				height: 80rpx;
-			}
-		}
-	}
+	@import "@/styles/index.scss";
 </style>

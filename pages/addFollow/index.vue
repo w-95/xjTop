@@ -1,6 +1,6 @@
 <template>
 	<view class="box">
-		<titleData :isShowFans='false' :isShowFollow='false' :authData='auth' :isAuth='true'></titleData>
+		<titleData :isShowFans='true' :isShowFollow='true' :authData='detailAuthData' :isAuth='false'></titleData>
 		<view class="service-and-specil">
 			<view class="title-box">
 				<view v-for="(t, i) in areaTitleList" :key="t.id" :class="activeTitleItem == t.id ? 'title-item active' : 'title-item'"
@@ -28,28 +28,6 @@
 					</view>
 				</view>
 			</view>
-			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem == 3">
-				<view class='list-box'>
-					<ListBox :listBox='arrData' type='alreadyOpened' v-if="activeTitleItem == 3"></ListBox>
-				</view>
-			</view>
-			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem == 4" style='height: 100%'>
-				<view class='system'>
-					<view class='conversation'>
-						<view class='alturl'>
-							<image :src="portrait"></image>
-						</view>
-						<view class='alt-content'>{{customerServiceTips}}</view>
-					</view>
-					<view class='phine-server'>
-						<button open-type='contact' class='kefu' session-from='weapp'>
-							<image src='../../static/images/tips.png'></image>
-							联系客服
-						</button> 
-					</view>
-				</view>
-				
-			</view>
 			<text class="loading-text" v-if='showLoadType && activeTitleItem != 4'>
 				{{loadingType === 0 ? contentText.contentdown : (loadingType === 1 ? contentText.contentrefresh : contentText.contentnomore)}}
 			</text>
@@ -60,12 +38,9 @@
 
 <script>
 	import comment from '../../components/comment/index.vue'
-	import d1 from '../../common/data/d1.js'
 	import Post from '../../components/user-post/index.vue'
 	import titleData from '../../components/my-data/index.vue'
 	import http from '../../utils/http.js'
-	import time from '../../utils/validate.js'
-	import ListBox from './ownDomain/index.vue'
 	import {
 		mapState,
 		mapMutations
@@ -77,7 +52,6 @@
 				userId: '',
 				userData : {},
 				activeTitleItem: 1,
-				arrData:[],
 				areaTitleList: [{
 					id: 1,
 					num: 4,
@@ -86,14 +60,6 @@
 					id: 2,
 					num: 20,
 					label: '回帖'
-				},{
-					id: 3,
-					num: 20,
-					label: '领域申请'
-				},{
-					id: 4,
-					num: 20,
-					label: '系统消息'
 				}],
 				show: false,
 				page: 1,
@@ -110,20 +76,15 @@
 				    contentnomore: '没有更多数据了' //else
 				},
 				showLoadType: true,
-				portrait: 'https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoEZR8fMGUADxBT0rfnpB5OYJqYsWA4ec8DNl2pH7ibVdjoyuHCzbENZpk7ERW1GiaibNtvyQmwRKltg/132',
-				//客服提示
-				customerServiceTips: '鞋匠云集荟聚鞋业资源,欢迎您开通领域权限,畅享更多鞋业资讯,若有需要了解点击下方【联系客服】'
 			}
 		},
 		components: {
-			Post,comment,ListBox,titleData
+			Post,comment,titleData
 		},
 		onLoad(e) {
 			let that = this
-			if(e.typeid){
-				that.activeTitleItem = e.typeid
-			}
-			this.userId = e.id
+			console.log(this.detailAuthData)
+			this.userId = this.detailAuthData.articleAuthorId
 			uni.showToast({
 				title: '加载中...',
 				mask: true,
@@ -137,7 +98,7 @@
 		created(){},
 		onReady() {},
 		computed: {
-			...mapState(['province', 'auth']),
+			...mapState(['province', 'auth','detailAuthData']),
 		},
 		onShow() {},
 		methods: {
@@ -145,8 +106,10 @@
 			commentItem(){
 				
 			},
-			systemMessage(id){
-				this.activeTitleItem = id
+			goFollow(){
+				uni.navigateTo({
+					url: '../followTab/index'
+				})
 			},
 			// 下拉刷新
 			onPullDownRefresh() {
@@ -251,44 +214,15 @@
 					pageNum: this.page,
 					pageSize: this.size
 				}
-				if(id == 3){
-					this.ownDomain(id)
-				}else{
-					http.getUserArticles(params).then(data => {
-						if(data.length > 0 && data.length< 10){
-							this.loadingType = 2
-						}
-						this.postArr = data
-						uni.hideToast()
-						this.activeTitleItem = id
-					})
-				}
-				
-			},
-			ownDomain(id){
-				let that = this
-				if(that.auth!= null && that.auth.userId){
-					http.getOwnDomain({userId:that.auth.userId,type:1}).then(res => {
-						let arr = []
-						if(res.length > 0){
-							if(res.length > 0 && res.length< 10){
-								that.loadingType = 2
-							}
-							arr = res.sort(function(a,b){return b.userCreateTime-a.userCreateTime})
-							for(let i of arr){
-								i.userCreateTime = time.formatTime(i.userCreateTime,"Y-M-D h:m:s")
-								i.userEndTime = time.formatTime(i.userEndTime,"Y-M-D h:m:s")
-							}
-						}
-						that.arrData = arr
-					})
+				http.getUserArticles(params).then(data => {
+					if(data.length > 0 && data.length< 10){
+						this.loadingType = 2
+					}
+					this.postArr = data
 					uni.hideToast()
-					that.activeTitleItem = id
-				}else {
-					uni.navigateTo({
-						url: '../login/index'
-					})
-				}
+					this.activeTitleItem = id
+				})
+				
 			},
 			handleColumnTap(item){
 				uni.showToast({
@@ -304,10 +238,6 @@
 					this.getUserArticles(item.id)
 				}else if(item.id == 2) {
 					this.getUserComments(item.id)
-				}else if(item.id == 3) {
-					this.ownDomain(item.id)
-				}else if(item.id == 4){
-					this.systemMessage(item.id)
 				}
 			},
 		}

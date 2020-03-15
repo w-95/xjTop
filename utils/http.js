@@ -100,6 +100,18 @@ var getOwnDomain = function (e){
 var getAddDomain = function (e){
 	return config.getRequest("user/add/domain",e);
 }
+//关注,取消关注
+var follow = function(e){
+	return config.getRequest("follow",e)
+}
+//获取关注人列表
+var getFollowList = function(e){
+	return config.getRequest("list/follow",e)
+}
+//获取用户列表
+var getRootUserList = function(e){
+	return config.getRequest("users",e)
+}
  
 module.exports = {
     getDomain,
@@ -126,5 +138,8 @@ module.exports = {
 	getUpdateDomains,
 	DetailDomain,
 	getOwnDomain,
-	getAddDomain
+	getAddDomain,
+	follow,
+	getFollowList,
+	getRootUserList
 }

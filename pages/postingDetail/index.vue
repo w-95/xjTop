@@ -10,7 +10,7 @@
 				<!-- <view class="title-content"></view> -->
 			</view>
 			<view class='tips'>
-				<view class='left'>
+				<view class='left' @click='goAddFollow'>
 					<view class='logo'>
 						<image :src="params.articleAuthor.userAvatarURL != ''? params.articleAuthor.userAvatarURL : '../../static/images/login.png'" mode=""></image>
 					</view>
@@ -77,6 +77,7 @@
 	import PostingDetail from '../../common/data/d1.js';
 	import comment from '../../components/comment/index.vue'
 	import http from '../../utils/http.js';
+	import time from '../../utils/validate.js'
 	import {
 		mapState,
 		mapMutations
@@ -163,7 +164,7 @@
 			}
 		},
 		methods: {
-			...mapMutations(['setOidVal','setIsDetails']),
+			...mapMutations(['setOidVal','setIsDetails','setDetailAuthData']),
 			ViewImage(e) {
 				let arr = []
 				for(let i of e.currentTarget.dataset.imgarr){
@@ -173,6 +174,15 @@
 					urls: arr,
 					current: arr[e.currentTarget.dataset.index]
 				});
+			},
+			goAddFollow(){
+				if(this.params.articleAuthorId){
+					this.params.articleAuthor.userUpdateTime = time.formatTime(this.params.articleAuthor.userUpdateTime,"Y-M-D h:m:s")
+					this.setDetailAuthData(this.params)
+					uni.navigateTo({
+						url: '../addFollow/index'
+					})
+				}
 			},
 			resetParams(){
 				this.page = 1;
@@ -573,10 +583,9 @@
 			}
 		}
 		.tipss{
-			margin: 0 auto;
-			margin-top: 280upx;
 			font-family:PingFang SC;
 			text-align: center;
+			padding: 153rpx 0;
 			image{
 				width: 40%;
 				height:auto;

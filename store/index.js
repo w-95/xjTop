@@ -17,7 +17,8 @@ const store = new Vuex.Store({
 			title: ''
 		},
 		//已开通列表进入开通领域的当前项
-		itemDomain:{}
+		itemDomain:{},
+		detailAuthData: null
 	},
 	mutations: {
 		setCity(state, val) {
@@ -49,6 +50,9 @@ const store = new Vuex.Store({
 		},
 		emptyAuth (state) {
 			state.auth = null;
+		},
+		setDetailAuthData(state,val) {
+			state.detailAuthData = val
 		}
 	}
 })

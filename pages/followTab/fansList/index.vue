@@ -2,11 +2,11 @@
 	<view class='box-item'>
 		<view v-for='(item,index) in listBox' :key='index' class='list-box' @click='goOpenArea(item)'>
 			<view class='logo-icon'>
-				<image :src="item.url" mode="widthFix"></image>
+				<image :src="item.followedUser.userAvatarURL" mode="widthFix"></image>
 			</view>
 			<view class='content-item'>
 				<view class='title'>
-					<text>{{item.name}}</text>
+					<text>{{item.followedUser.userName}}</text>
 				</view>
 			</view>
 			<image src="../../../static/images/right.png" mode="widthFix" class='right-item'></image>
@@ -33,7 +33,7 @@
 		components: {},
 		onLoad(e) {},
 		created(){
-			
+			console.log(this.listBox)
 		},
 		onReady() {},
 		computed: {
@@ -53,7 +53,7 @@
 		.list-box{
 			// width: 100%;
 			box-sizing: border-box;
-			padding: 10upx 20upx;
+			padding: 20upx 20upx;
 			display: flex;
 			align-items: center;
 			justify-content:space-between;

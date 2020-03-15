@@ -1,0 +1,50 @@
+.index-page {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+		.my-info-bar {
+			width: 686upx;
+			background: #FFFFFF;
+			margin-top: 150upx;
+			.title{
+				font-size: 32upx;
+				font-weight: bold;
+				margin: 0 auto;
+				text-align: center;
+				padding: 80upx 0 0 0;
+			}
+			.user-icon {
+				width: 100upx;
+				height: 100upx;
+				margin: 0 auto;
+				border-radius: 50%;
+				overflow: hidden;
+			}
+			.user-name {
+				font-weight: 300;
+				flex: 1;
+				line-height: 76upx;
+				font-size: 32upx;
+				margin-left: 22upx;
+				color: rgba(0, 0, 0, 1);
+			}
+		}
+		.get-phone{
+			margin-top: 80upx;
+			width: 80%;
+			font-size: 32upx;
+			background-color: #42E1A4;
+			color: white;
+			border: none;
+		}
+		.clone{
+			margin-top: 50upx;
+			width: 80%;
+			font-size: 32upx;
+			border: none;
+			background-color: rgba(102,102,102,1);
+			color: #F1F1F1;
+		}
+	}

@@ -29,7 +29,12 @@
 				"enablePullDownRefresh": true
 			}
 		},
-		
+		{
+			"path": "pages/addFollow/index",
+			"style": {
+				"enablePullDownRefresh": true
+			}
+		},
 		{
 			"path": "pages/myData/index",
 			"style": {
