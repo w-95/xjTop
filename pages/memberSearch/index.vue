@@ -27,17 +27,16 @@
 			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem == 3">
 				<view class="user-list">
 					<icon type="search" size="15" color='#999999'></icon>
-					<input class="uni-input" confirm-type='search' placeholder="请输入用户昵称" @input ="changeInput" @click='getFocus' :focus="false" disabled=true/>
-					<text class='user-text'>用户列表</text>
+					<input class="uni-input" confirm-type='search' placeholder="请输入用户昵称" @click='getFocus' :focus="false" disabled=true/>
+					<text class='user-text' @click='goUserList'>用户列表</text>
 					<image src="../../static/images/right.png" mode="widthFix" class='right-item'></image>
 				</view>
-				<view class="tipss" v-if='userList.length <= 0'>
+				<view class="tipss" v-if='messageList.length <= 0'>
 					<image src="../../static/images/no-comment.png" mode="" alt='i.alt' mode="widthFix" ></image>
 					<view>暂无更多开通列表!</view>
 				</view>
-				<text class="loading-text" v-if='userList.length > 0'>
-					{{loadingType === 0 ? contentText.contentdown : (loadingType === 1 ? contentText.contentrefresh : contentText.contentnomore)}}
-				</text>
+				<ListBox :listBox='messageList' type='message' v-else></ListBox>
+				
 			</view>
 		</view>
 	</view>
@@ -51,11 +50,11 @@
 	import http from '../../utils/http.js'
 	import time from '../../utils/validate.js'
 	import ListBox from './listItem/index.vue'
+	import {mapState,mapMutations} from 'vuex';
 	export default {
 		data() {
 			return {
 				activeTitleItem: 1,
-				loadingType: 0,//定义加载方式 0---contentdown  1---contentrefresh 2---contentnomore
 				areaTitleList: [{
 					id: 1,
 					num: 4,
@@ -72,6 +71,7 @@
 				DomainType: 1,
 				arrData:[],
 				userList: [],
+				messageList: [],
 				page: 1,
 				size: 10
 			}
@@ -86,39 +86,6 @@
 			}
 			this.init(this.DomainType)
 		},
-		// 下拉刷新
-		onPullDownRefresh() {
-			if(this.activeTitleItem == 3){
-				uni.showLoading({
-					title: '加载中...',
-					mask: true,
-					icon: 'loading'
-				})
-				this.page = 1
-				this.size = 10
-				uni.showNavigationBarLoading();
-				this.getList('refresh');
-			}
-		},
-		// 上拉加载
-		onReachBottom: function() {
-			if(this.activeTitleItem == 3){
-				uni.showLoading({
-					title: '加载中...',
-					mask: true,
-					icon: 'loading'
-				})
-				let that = this
-				if (that.loadingType != 0) {//loadingType!=0;直接返回
-					uni.hideLoading()
-					return false;
-				}
-				that.loadingType = 1;
-				uni.showNavigationBarLoading();//显示加载动画
-				that.page++
-				that.getList('load')
-			}
-		},
 		created(){
 			uni.showLoading({
 				title: '加载中...',
@@ -130,7 +97,9 @@
 			})
 		},
 		onReady() {},
-		computed: {},
+		computed: {
+			...mapState(['province', 'auth']),
+		},
 		onShow() {
 			this.init(this.DomainType)
 		},
@@ -157,11 +126,15 @@
 			},
 			getUserList(callBack){
 				let params = {
-					pageNum: this.page,
-					pageSize: this.size
-				}
-				http.getRootUserList(params).then(res => {
+					adminId: this.auth.userId
+				},that = this,arr = [];
+				http.getRootMessageList(params).then(res => {
 					uni.hideLoading()
+					arr = res.sort(function(a,b){return a.sendTime-b.sendTime})
+					for(let i of arr){
+						i.sendTime= time.formatTime(i.sendTime,"Y-M-D")
+					}
+					that.messageList= arr
 				})
 			},
 			handleColumnTap(item){
@@ -181,8 +154,17 @@
 				}else if(item.id == 3){
 					this.getUserList()
 				}
-				
 			},
+			goUserList(){
+				uni.navigateTo({
+					url: '../userList/index'
+				})
+			},
+			getFocus(){
+				uni.navigateTo({
+					url: '../searchUser/index'
+				})
+			}
 			
 		}
 	}

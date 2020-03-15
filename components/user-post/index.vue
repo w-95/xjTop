@@ -21,11 +21,6 @@
 			</view>
 			<view class="content" v-else>
 				<view v-html="item.articleContent.textContent.replace(/(\r\n|\n|\r|↵)/gm, '<br/>')" class="text-content"></view>
-				<!-- <view v-if="item.articleContent.imgArr.length > 0" class='img-box' >
-					<view class="item" v-for='(i,idx) in item.articleContent.imgArr' :key='idx'>
-						<image :src="i.src" mode="aspectFill" alt='i.alt'></image>
-					</view>
-				</view> -->
 				<img-arr v-if='item.articleContent.imgArr.length > 0' :imgArr = 'item.articleContent.imgArr'></img-arr>
 			</view>
 			<!-- user部分 -->
@@ -63,7 +58,6 @@
 				type: Array,
 				default: () => []
 			}
-			
 		},
 		watch: {
 			'deailDataList': function(newVal){
@@ -90,9 +84,6 @@
 			})
 			this.setDeailData()
 			uni.hideToast()
-			this.$nextTick(()=>{
-				console.log('组件渲染完成')
-			})
 		},
 		onShow() {
 			
@@ -102,7 +93,6 @@
 				return val.replace(/(\r\n|\n|\r|↵)/gm, '<br/>')
 			},
 			goComment (item) {
-				console.log(item)
 				uni.navigateTo({
 					url: '../postingDetail/index?id='+item.oId+'&title='+item.articleTitle
 				})
@@ -156,7 +146,6 @@
 			box-sizing: border-box;
 			display: flex;
 			align-items: center;
-			// padding: 0 20upx;
 			.title-logo{
 				font-size: 24upx;
 				background-color: #FFF2F3;
@@ -187,7 +176,6 @@
 				display: flex;
 				box-sizing:border-box;
 				justify-content:flex-end;
-				// padding: 0 20upx;
 				margin-top: 18upx;
 				.item{
 					font-family:PingFang SC;
@@ -305,10 +293,8 @@
 				     letter-spacing: 1rpx;
 					 /deep/ .pho{
 						color: red;
-						// font-size: 38upx;
 					}
 					.pho{
-					  	// font-size: 28upx;
 						font-weight: bold;
 					}
 				}

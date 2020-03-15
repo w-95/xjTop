@@ -47,6 +47,10 @@
 				</QSpicker>
 				<modal v-model="show" :text='toastTips' @cancel='cancel' @confirm='confirm' @event='event'></modal>
 				<button class='open' @click='openDomain'>确定开通</button>
+				<button open-type='contact' class='kefu' session-from='weapp'>
+					<image src='../../static/images/tips.png'></image>
+					联系客服
+				</button> 
 			</view>
 		</view>
 	</view>

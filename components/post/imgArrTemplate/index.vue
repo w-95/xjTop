@@ -9,9 +9,7 @@
 		</view>
 	</view>
 </template>
-
 <script>
-	
 	export default {
 		data() {
 			return {}
@@ -21,15 +19,11 @@
 				type: Array,
 				default: () => []
 			}
-			
 		},
-		created(){
-			console.log(this.imgArr)
-		},
+		created(){},
 		watch: {},
 	}
 </script>
-
 <style lang="scss" scoped>
 	.box{
 			font-family:PingFang SC;

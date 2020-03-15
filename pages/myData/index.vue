@@ -33,21 +33,21 @@
 					<ListBox :listBox='arrData' type='alreadyOpened' v-if="activeTitleItem == 3"></ListBox>
 				</view>
 			</view>
-			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem == 4" style='height: 100%'>
-				<view class='system'>
-					<view class='conversation'>
-						<view class='alturl'>
-							<image :src="portrait"></image>
-						</view>
-						<view class='alt-content'>{{customerServiceTips}}</view>
+			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem == 4" :class="[rootMessageList.length > 0 ? 'none' : 'add']">
+				<view class='conversation'v-for='(item,index) in rootMessageList' :key='index'>
+					<view class='alturl'>
+						<image :src="item.user.userAvatarURL"></image>
 					</view>
-					<view class='phine-server'>
-						<button open-type='contact' class='kefu' session-from='weapp'>
-							<image src='../../static/images/tips.png'></image>
-							联系客服
-						</button> 
-					</view>
+					<view class='alt-content'>{{item.message}}</view>
 				</view>
+				
+				<view class='phine-server'>
+					<button open-type='contact' class='kefu' session-from='weapp'>
+						<image src='../../static/images/tips.png'></image>
+						联系客服
+					</button> 
+				</view>
+				<view class='add-height'></view>
 				
 			</view>
 			<text class="loading-text" v-if='showLoadType && activeTitleItem != 4'>
@@ -110,9 +110,7 @@
 				    contentnomore: '没有更多数据了' //else
 				},
 				showLoadType: true,
-				portrait: 'https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoEZR8fMGUADxBT0rfnpB5OYJqYsWA4ec8DNl2pH7ibVdjoyuHCzbENZpk7ERW1GiaibNtvyQmwRKltg/132',
-				//客服提示
-				customerServiceTips: '鞋匠云集荟聚鞋业资源,欢迎您开通领域权限,畅享更多鞋业资讯,若有需要了解点击下方【联系客服】'
+				rootMessageList:[]
 			}
 		},
 		components: {
@@ -146,82 +144,93 @@
 				
 			},
 			systemMessage(id){
-				this.activeTitleItem = id
+				this.activeTitleItem = id;
+				let params = {
+					userId: this.auth.userId
+				},that = this;
+				http.getRootUserMessage(params).then(res => {
+					that.rootMessageList = res
+					uni.hideLoading()
+				})
 			},
 			// 下拉刷新
 			onPullDownRefresh() {
-				this.start = 'top'
-				this.page = 1
-				this.size = 10
-				uni.showNavigationBarLoading();
-				if(this.activeTitleItem == 1){
-					this.getUserArticles(this.activeTitleItem)
-				}else if(this.activeTitleItem == 2){
-					this.getUserComments(this.activeTitleItem)
+				if(this.activeTitleItem != 4){
+					this.start = 'top'
+					this.page = 1
+					this.size = 10
+					uni.showNavigationBarLoading();
+					if(this.activeTitleItem == 1){
+						this.getUserArticles(this.activeTitleItem)
+					}else if(this.activeTitleItem == 2){
+						this.getUserComments(this.activeTitleItem)
+					}
+					uni.showToast({
+						title: '已经是最新了',
+						mask: true,
+						icon: 'success',
+						duration: 1500
+					})
+					uni.hideNavigationBarLoading();
+					uni.stopPullDownRefresh();
 				}
-				uni.showToast({
-					title: '已经是最新了',
-					mask: true,
-					icon: 'success',
-					duration: 1500
-				})
-				uni.hideNavigationBarLoading();
-				uni.stopPullDownRefresh();
 			},
 			// 上拉加载
 			onReachBottom: function() {
-				uni.showLoading({
-					title: '加载中...',
-					mask: true,
-					icon: 'loading'
-				})
-				let _self = this
-				if (_self.loadingType != 0) {//loadingType!=0;直接返回
-					uni.hideLoading()
-					return false;
-				}
-				_self.loadingType = 1;
-				uni.showNavigationBarLoading();//显示加载动画
-				_self.page++
-				let params = {
-					userId: this.userId,
-					pageNum: _self.page,
-					pageSize: _self.size
-				}
-				if(_self.activeTitleItem == 1){
-					http.getUserArticles(params).then(data => {
-						if(data.length == 0){
-							_self.loadingType = 2;
-							uni.hideNavigationBarLoading();//关闭加载动画
-							uni.hideLoading()
-							return false
-						}
-						_self.postArr = _self.postArr.concat(data)
-						_self.loadingType = 0;//将loadingType归0重置
-						uni.hideNavigationBarLoading()
-						uni.hideLoading()
-						uni.hideToast()
+				if(this.activeTitleItem != 4){
+					uni.showLoading({
+						title: '加载中...',
+						mask: true,
+						icon: 'loading'
 					})
-				}else if(_self.activeTitleItem == 2){
-					http.getUserArticles(params).then(data => {
-						if(data.length == 0){
-							_self.loadingType = 2;
-							uni.hideNavigationBarLoading();//关闭加载动画
-							uni.hideLoading()
-							return false
-						}
-						if(data.length<=5){
-							_self.showLoadType = false
-						}
-						_self.repliesArr = _self.repliesArr.concat(data)
-						_self.loadingType = 0;//将loadingType归0重置
-						uni.hideNavigationBarLoading()
+					let _self = this
+					if (_self.loadingType != 0) {//loadingType!=0;直接返回
 						uni.hideLoading()
-						uni.hideToast()
-					})
-				}else if(_self.activeTitleItem == 3){
-					uni.hideLoading()
-					_self.loadingType = 3
+						return false;
+					}
+					_self.loadingType = 1;
+					uni.showNavigationBarLoading();//显示加载动画
+					_self.page++
+					let params = {
+						userId: this.userId,
+						pageNum: _self.page,
+						pageSize: _self.size
+					}
+					if(_self.activeTitleItem == 1){
+						http.getUserArticles(params).then(data => {
+							if(data.length == 0){
+								_self.loadingType = 2;
+								uni.hideNavigationBarLoading();//关闭加载动画
+								uni.hideLoading()
+								return false
+							}
+							_self.postArr = _self.postArr.concat(data)
+							_self.loadingType = 0;//将loadingType归0重置
+							uni.hideNavigationBarLoading()
+							uni.hideLoading()
+							uni.hideToast()
+						})
+					}else if(_self.activeTitleItem == 2){
+						http.getUserArticles(params).then(data => {
+							if(data.length == 0){
+								_self.loadingType = 2;
+								uni.hideNavigationBarLoading();//关闭加载动画
+								uni.hideLoading()
+								return false
+							}
+							if(data.length<=5){
+								_self.showLoadType = false
+							}
+							_self.repliesArr = _self.repliesArr.concat(data)
+							_self.loadingType = 0;//将loadingType归0重置
+							uni.hideNavigationBarLoading()
+							uni.hideLoading()
+							uni.hideToast()
+						})
+					}else if(_self.activeTitleItem == 3){
+						uni.hideLoading()
+						_self.loadingType = 3
+					}
 				}
 			},
 			setUserData(data){

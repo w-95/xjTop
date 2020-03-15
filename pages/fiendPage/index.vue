@@ -13,12 +13,8 @@
 		data() {
 			return {}
 		},
-		onLoad(e){
-			
-		},
-		methods: {
-			
-		}
+		onLoad(e){},
+		methods: {}
 	}
 </script>
 

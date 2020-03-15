@@ -40,11 +40,6 @@
 		<view class='comment' v-if='deailDataObj.length>0'>
 			<comment :deailData = 'deailDataObj' :type='detail'></comment>
 		</view>
-		<!-- 无数据 -->
-		<!-- <view class="tipsa" v-if="JSON.stringify(params) == '{}'">
-			<image src="../../static/images/no_data.png" mode="" alt='i.alt' mode="widthFix" ></image>
-			<view>暂无更多数据！</view>
-		</view> -->
 		<!-- 无评论 -->
 		<view class="tipss" v-if="showTemplate && deailDataObj.length == 0 && showCommentTips">
 			<image src="../../static/images/no-comment.png" mode="" alt='i.alt' mode="widthFix" ></image>
@@ -54,12 +49,7 @@
 		<text class="loading-text" v-if="showLoadType && showTemplate && deailDataObj.length > 0">
 			{{loadingType === 0 ? contentText.contentdown : (loadingType === 1 ? contentText.contentrefresh : contentText.contentnomore)}}
 		</text>
-		<!-- <view class='height'></view>  -->
 		<view class='bottom'>
-			<!-- <view>
-				<image src='../../static/images/bulous.png'></image>
-				<text>1</text>
-			</view> -->
 			<view @click='goComment'>
 				<image src='../../static/images/comment-a.png'></image>
 				<text>{{params.articleCommentCount}}</text>
@@ -280,9 +270,6 @@
 					pageSize: this.size
 				},that = this;
 				http.getComments(params).then(data =>{
-					// this.showComment = true
-					// this.deailDataObj = data
-					// uni.hideToast()
 					if(type == 'init') { //初始化
 						that.deailDataObj = data
 						if(data.length == 0){
@@ -291,10 +278,6 @@
 						}else if(data.length > 0 && data.length < 10){
 							that.loadingType = 2
 						}
-						//少于7条数据不显示加载更多字段
-						// else if(that.deailDataObj.length < 10){
-						// 	that.showLoadType = false
-						// }
 						uni.hideLoading()
 					}else if(type == 'refresh'){ //下啦刷新
 						that.deailDataObj = data

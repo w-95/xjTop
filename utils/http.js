@@ -112,7 +112,24 @@ var getFollowList = function(e){
 var getRootUserList = function(e){
 	return config.getRequest("users",e)
 }
- 
+//获取管理员发送用户列表
+var getRootMessageList = function(e){
+	return config.getRequest('admin/messages',e)
+}
+var getRootUserMessage = function(e){
+	return config.getRequest('user/messages',e)
+}
+var rootSendMessage = function(e){
+	return config.postRequest('add/message',e)
+}
+//检查关注状态
+var checkFollow = function(e){
+	return config.getRequest('check/follow',e)
+}
+//会员查询
+var searchUser = function(e){
+	return config.getRequest('search/user',e)
+}
 module.exports = {
     getDomain,
 	getDomainList,
@@ -141,5 +158,10 @@ module.exports = {
 	getAddDomain,
 	follow,
 	getFollowList,
-	getRootUserList
+	getRootUserList,
+	getRootMessageList,
+	getRootUserMessage,
+	rootSendMessage,
+	checkFollow,
+	searchUser
 }

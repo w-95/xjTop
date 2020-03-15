@@ -1,10 +1,10 @@
 <template>
 	<view class='box-item'>
-		<view v-for='(item,index) in listBox' :key='index' class='list-box' @click='goOpenArea(item)'>
+		<view v-for='(item,index) in listBox' :key='index' class='list-box'>
 			<view class='logo-icon'>
-				<image :src="item.user.userAvatarURL" mode="widthFix"></image>
+				<image :src="item.user.userAvatarURL || item.userAvatarURL" mode="widthFix"></image>
 			</view>
-			<view class='content-item'>
+			<view class='content-item' v-if="type == 'apply' || type == 'alreadyOpened'">
 				<view class='title'>
 					<text>{{item.user.userName}}</text>
 					<view>申请：{{item.userCreateTime}}</view>
@@ -14,7 +14,7 @@
 					<text>{{item.domainURI}}</text>
 				</view>
 			</view>
-			<view class='right-item' v-if="type == 'apply'">
+			<view class='right-item' v-if="type == 'apply'" @click='goOpenArea(item)'>
 				去开通
 				<image src="../../../static/images/right.png" mode="widthFix"></image>
 			</view>
@@ -22,6 +22,23 @@
 				<image src="../../../static/images/tong.png" mode="widthFix"></image>
 				<!-- <image src="../../../static/images/no-tong.png" mode="widthFix"></image> -->
 			</view>
+			<view v-if="type == 'message'" class='message'>
+				<view>{{item.user.userName}}</view>
+				<view class='mesage-text'>{{item.message}}</view>
+			</view>
+			<view class='time'>{{item.sendTime}}</view>
+			<view v-if="type == 'userList'" class='message'>
+				<view>{{item.userName}}</view>
+				<view class='mesage-text'>加入时间:{{item.userUpdateTime}}</view>
+			</view>
+			<view class='right-item' v-if="type == 'userList'" @click='gocontactUsers(item)'>
+				联系用户
+				<image src="../../../static/images/right.png" mode="widthFix"></image>
+			</view>
+		</view>
+		<view class='service' @click='goService' v-if="type == 'message'">
+			<image src='../../../static/images/tips.png'></image>
+			<view>客服</view>
 		</view>
 	</view>
 </template>
@@ -61,6 +78,11 @@
 				this.setItemDomain(item)
 				uni.navigateTo({
 					url: '../openArea/index'
+				})
+			},
+			gocontactUsers(item){
+				uni.navigateTo({
+					url: '../contactUsers/index?id='+item.oId
 				})
 			}
 		}
@@ -136,6 +158,45 @@
 					height: auto;
 				}
 			}
+			.message{
+				width: 50%;
+				font-family:PingFang SC;
+				font-size: 24upx;
+				line-height: 50upx;
+				padding: 20upx 0;
+				.mesage-text{
+					width: 100%;
+					overflow: hidden;
+					text-overflow:ellipsis;
+					white-space: nowrap;
+					color: #C3C3C3;
+				}	
+			}
+			.time{
+				font-family:PingFang SC;
+				font-size: 24upx;
+				color: #C3C3C3;
+			}
+		}
+	}
+	.service{
+		position: fixed;
+		right: 50rpx;
+		bottom: 150rpx;
+		width: 80rpx;
+		font-family: PingFang SC;
+		height: 80rpx;
+		border: 1px solid #D3D3D3;
+		border-radius: 25%;
+		font-size: 20rpx;
+		text-align: center;
+		background-color: white;
+		-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.19), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.19), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+		image{
+			margin: 7rpx 0 0rpx 0;
+			width: 40rpx;
+			height: 40rpx;
 		}
 	}
 </style>

@@ -33,13 +33,11 @@
 <script>
 	import phoneList from './phone-list.vue'
 	import phoneAlphabet from './phone-alphabet.vue'
-	import phoneSearchList from './phone-search-list.vue'
 	export default {
 		name:"phone-directory",
 		components:{
 			phoneList,
-			phoneAlphabet,
-			phoneSearchList
+			phoneAlphabet
 		},
 		props:{
 			phones:Object,
@@ -64,7 +62,6 @@
 			}
 		},
 		mounted () {
-			console.log(this.defCity)
 			let windowHeight = uni.getSystemInfoSync().windowHeight
 			
 			// #ifndef APP-PLUS
@@ -87,9 +84,7 @@
 		methods:{
 			//
 			goSearch(){
-				// uni.navigateTo({
-				// 	url: '../../pages/phones/phone-search?phones=' + this.phonesEscape
-				// })
+				
 			},
 			handleClick (e) {
 				this.$emit('paramClick',e)

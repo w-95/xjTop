@@ -169,16 +169,6 @@
 		onShow() {
 			let that = this
 			that.init('init')
-			// uni.onNetworkStatusChange(function (res) {
-			//     if(!res.isConnected) {
-			// 		uni.hideLoading()
-			// 		uni.showToast({
-			// 			title: '当前无网络连接',
-			// 			icon: 'none'
-			// 		})
-			// 		that.showNullTips = true
-			// 	}
-			// });
 		},
 		methods: {
 			init(type){
@@ -303,10 +293,6 @@
 							uni.hideLoading()
 							return false
 						}else {
-							// let arr = that.newCommenArr.concat(data.articles)
-							// that.$nextTick(() => {
-							// 	that.newCommenArr = arr
-							// })
 							if(data.articles.length > 0 && data.articles.length < 10) {
 								that.loadingType = 2
 							}else {
@@ -324,7 +310,6 @@
 						}else if(data.articles.length > 0 && data.articles.length < 10) {
 							this.loadingType = 2
 						}
-						// that.newCommenArr = data.articles
 					}
 					
 				})
@@ -377,11 +362,6 @@
 					if(data.data.length > 0){
 						return true
 					}
-					// for(let i of data.data){
-					// 	if(!i.isExpired){ //设置了权限
-					// 		return true
-					// 	}
-					// }
 					return false
 				})
 				

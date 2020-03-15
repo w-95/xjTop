@@ -29,13 +29,6 @@
 					</view>
 				</view>
 			</view>
-			<!-- <view class='right' v-if="item.commentOriginalCommentId != '' "  @click='commentReplies(item)'>
-				<view class='left-box'>
-					<view class="icon"></view>
-					<text class="title">{{item.commentAuthorName}} · {{item.timeAgo}}</text>
-				</view>
-				<view class='content' v-html='item.commentContent'></view>
-			</view> -->
 		</view>
 		
 	</view>
@@ -72,16 +65,10 @@
 				this.activeIndex = newVal
 			}
 		},
-		created(){
-			console.log(this.deailData)
-			console.log(this.type)
-		},
-		onLoad(){
-			console.log(this.deailData)
-		},
+		created(){},
+		onLoad(){},
 		methods: {
 			toask(item,index){
-				
 				if(this.activeIndex == index){
 					this.activeIndex = null
 				}else {
@@ -90,7 +77,6 @@
 				}
 			},
 			fabulous(item){
-				console.log(item)
 				let params = {
 					"userId": item.commenter.oId,
 					"commentId": item.commentOnArticleId
@@ -103,14 +89,11 @@
 						duration: 1500
 					})
 				})
-				
 			},
 			comment(item){
-				// this.showKey = !this.showKey
 				this.$emit('commentItem',item)
 			},
 			report(item){
-				console.log(item)
 				uni.navigateTo({
 					url: '../list/index?reportDataType=1&Id='+item.commentAuthorId
 				})
@@ -122,7 +105,6 @@
 <style scoped lang='scss'>
 	.box{
 		box-sizing: border-box;
-		/* border: 1px solid red; */
 		.left{
 			padding: 40upx 20upx;
 			.left-box{

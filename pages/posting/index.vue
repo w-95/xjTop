@@ -11,7 +11,6 @@
 		   <view class='img-btn'>
 			   <view @click='upLoad'>
 				   <image src='../../static/images/img.png'></image>
-				   <!-- <image src='../../static/images/title.png' @click='setTitle'></image> -->
 			   </view>
 			    <button type="primary" @click='sendComment' class='comment-btn'>发帖</button>
 		   </view>
@@ -187,11 +186,8 @@
 				if(event.detail.height == 0) {
 					this.bottom = 0
 				}
-				// if(this.bottom == 0 && event.detail.height != 0) {
-					// this.bottom = event.detail.height+50,
-					this.bottom = event.detail.height,
-					this.locBtm = this.bottom
-				// }
+				this.bottom = event.detail.height,
+				this.locBtm = this.bottom
 			},
 			//城市选择跳转
 			goCity(){

@@ -5,12 +5,9 @@
 				<open-data type="userAvatarUrl"></open-data>
 			</view>
 			<p class='title'>鞋业社区</p>
-			<!-- <view class="user-name" @click="handleLogin()">{{auth? auth.nickName: '请登录'}}</view> -->
 		</view>
 		<button class='get-phone' open-type="getUserInfo" @getuserinfo="getuserinfo" withCredentials="true">登录</button>
 		<button class='clone' @click='goIndex'>取消登陆</button>
-		
-		<!-- <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber" class="get-phone">获取手机号注册</button> -->
 	</view>
 </template>
 
@@ -71,7 +68,6 @@
 						this.setAuth(data.data)
 						that.goPage()
 					}
-					
 				})
 			},
 			//用户是否选择默认领域

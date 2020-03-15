@@ -58,6 +58,24 @@
 				display: flex;
 				justify-content: space-around;
 				padding: 0 20upx;
+				.kefu{
+					width: 100%;
+					background-color: #E6E6E6;
+					font-size: 24upx;
+					font-family: PingFang SC;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					image{
+						width: 35rpx;
+						height: 35rpx;
+						margin-right: 20rpx;
+					}
+				}
+				.kefu::after{
+					border: none;
+				}
+				
 				.box-left,.box-right{
 					color: #919191;
 					display: flex;

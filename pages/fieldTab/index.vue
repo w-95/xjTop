@@ -31,7 +31,6 @@
 			<view class='dot'></view>
 		</view>
 		<view class="is-domain" @click="choiceField">
-			<!-- <image src="../../static/images/bianji.png" mode=""></image> -->
 		</view>
 	</view>
 </template>
@@ -117,9 +116,7 @@
 			that.page++
 			that.getList('load')
 		},
-		mounted(){
-			
-		},
+		mounted(){},
 		onReady() {},
 		computed: {
 			...mapState(['province', 'auth']),
@@ -143,11 +140,9 @@
 					that.areaTitleList = data
 					for(let i of data){
 						if(that.domainTitke == i.domainTitle){
-							console.log(i)
 							that.activeTitleItem = i.id
 						}
 					}
-					console.log(that.activeTitleItem)
 				})
 			},
 			//用户是否选择默认领域

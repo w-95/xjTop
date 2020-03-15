@@ -32,13 +32,9 @@
 		},
 		components: {},
 		onLoad(e) {},
-		created(){
-			console.log(this.listBox)
-		},
+		created(){},
 		onReady() {},
-		computed: {
-			
-		},
+		computed: {},
 		onShow() {},
 		methods: {
 			

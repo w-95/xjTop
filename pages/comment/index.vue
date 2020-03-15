@@ -197,11 +197,8 @@
 				if(event.detail.height == 0) {
 					this.bottom = 0
 				}
-				// if(this.bottom == 0 && event.detail.height != 0) {
-					// this.bottom = event.detail.height+50,
-					this.bottom = event.detail.height,
-					this.locBtm = this.bottom
-				// }
+				this.bottom = event.detail.height,
+				this.locBtm = this.bottom
 			},
 			//发布评论
 			sendComment(){

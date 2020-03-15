@@ -21,10 +21,10 @@
 			<view class="phone">
 				
 				<view class="tips-box">
-					<view class="box-left" @click="goDial">
-						<image src="../../static/images/phone.png" mode=""></image>
-						<view class="title">联系客服</view>
-					</view>
+					<button open-type='contact' class='kefu' session-from='weapp'>
+						<image src='../../static/images/tips.png'></image>
+						联系客服
+					</button> 
 				</view>
 			</view>
 		</view>
@@ -55,36 +55,6 @@
 			uni.hideToast()
 		},
 		methods:{
-			goDial(){
-				let that = this
-				uni.makePhoneCall({
-				 	// 手机号
-				    phoneNumber: that.phone, 
-				
-					// 成功回调
-					success: (res) => {
-						console.log('调用成功!')	
-					},
-				
-					// 失败回调
-					fail: (res) => {
-						console.log('调用失败!')
-					}
-					
-				  });
-			},
-			// 是否申请过
-			isResetDomain(){
-				let that = this;
-				if(JSON.stringify(this.userData) != '{}'){}
-				let params = {
-					userId: this.userData.uid,
-					title: that.userData.title
-				}
-				http.getUserDiction(params).then(data => {
-					console.log(data)
-				})
-			},
 			//权限申请
 			openVip(){
 				if(JSON.stringify(this.userData) != '{}'){
@@ -94,7 +64,6 @@
 						type: 1
 					}
 					http.getAddDomain(params).then(res =>{
-						console.log(res)
 						uni.showToast({
 							title: '申请成功!',
 							icon: 'none'

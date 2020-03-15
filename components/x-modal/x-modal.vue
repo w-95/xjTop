@@ -1,14 +1,8 @@
 <template>
 	<view class="modal-container" :class="{show: showValue}" @touchmove.stop @click.stop='cancel(2)'>
 		<view class="modal-content" v-if="showValue" @click.stop>
-			<!-- <slot name='title'>
-				<view class="modal-title" :class="{'modal-title-padding': !text}" v-if='title'>
-					{{title}}
-				</view>
-			</slot> -->
 			<slot name='text'>
 				<view class="modal-article" v-html="text" v-if="text">
-					<!-- text 文本信息 -->
 				</view>
 			</slot>
 			<view class="modal-row">

@@ -65,7 +65,6 @@
 			},
 			goIndex(){
 				this.sendActive(this.activeName.oId)
-				console.log(this)
 			},
 			init(){
 				let that = this

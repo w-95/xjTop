@@ -15,8 +15,8 @@
 					{{authData.articleAuthorName}}
 				</view>
 				<view class="operation-follow" v-if='isShowFollow'>
-					<button class='add-follow' @click='addFollow'>+关注</button>
-					<!-- <button class='clean-follow' @click='celarFollow'>取消关注</button> -->
+					<button class='add-follow' @click="addFollow('add')" v-if='!isAddFollow'>+关注</button>
+					<button class='clean-follow' @click="addFollow('clear')" v-else>取消关注</button>
 				</view>
 			</viwe>
 			<view class="text" v-if='isAuth'>加入时间: {{authData.userUpdateTime}}</view>
@@ -59,6 +59,7 @@
 					count: 20,
 					type: 'fans'
 				}],
+				isAddFollow: false
 			}
 		},
 		props: {
@@ -82,27 +83,50 @@
 		computed: {
 			...mapState(['auth'])
 		},
+		created(){
+			if(this.isShowFollow){
+				this.isFollow()
+			}
+		},
 		methods: {
+			//获取关注状态
+			isFollow(){
+				let params = {
+					userId: this.auth.userId,
+					followedUserId: this.authData.articleAuthorId
+				}
+				http.checkFollow(params).then(res =>{
+					this.isAddFollow = res
+				})
+			},
 			goFollow(){
 				uni.navigateTo({
 					url: '../followTab/index?id='+this.authData.articleAuthorId
 				})
 			},
-			addFollow(){
+			addFollow(type){
 				let params = {
 					userId: this.auth.userId,
 					followedUserId: this.authData.articleAuthorId
 				}
 				http.follow(params).then(data => {
-					uni.showToast({
-						title: '关注成功',
-						mask: true,
-						duration: 1500
-					})
+					if(type == 'add'){
+						this.isAddFollow = true;
+						uni.showToast({
+							title: '关注成功',
+							mask: true,
+							duration: 1500
+						})
+					}else if(type == 'clear'){
+						this.isAddFollow = false;
+						uni.showToast({
+							title: '取消关注成功',
+							mask: true,
+							duration: 1500
+						})
+					}
+					
 				})
-			},
-			clearFollow(){
-				this.addFollow()
 			}
 		}
 	}
@@ -110,16 +134,12 @@
 
 <style lang="scss" scoped>
 	.logo-box{
-		// background-image: url('../../static/images/timg.jpg');
-		// background-size: 100% 100%;
 		height: 370upx;
 		background-color: #007BFB;
 		border: 1px solid  #007BFB;
-		// border-radius: 50%;
 		width: 750upx;
 		box-sizing: border-box;
 		line-height: 65upx;
-		
 		.logo{
 			width: 90%;
 			margin: 0 auto;
@@ -169,12 +189,16 @@
 					}
 				}
 				.auth-name {
+					width:346rpx;
 					margin: 0;
 					padding: 0;
 					margin-left: 30upx;
 					height: 80upx;
 					line-height: 80upx;
 					overflow: hidden;
+					overflow: hidden;
+					text-overflow:ellipsis;
+					white-space: nowrap;
 				}
 				.operation-follow{
 					.add-follow{
@@ -192,13 +216,6 @@
 						margin-left: 20upx
 					}
 				}
-				// button {
-				// 	margin-left: 20upx;
-				// 	font-size: 28upx;
-				// 	background: none;
-				// 	color: blue;
-				// 	left: 225upx;
-				// }
 				button::after{ border: none;background: none;}
 				.vip{
 					width: 150upx;

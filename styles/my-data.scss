@@ -262,6 +262,57 @@
 		}
 	}
 	.animated {
+		.conversation{
+			width: 100%;
+			padding: 40upx;
+			display: flex;
+			box-sizing: border-box;
+			.alturl{
+				width: 65upx;
+				height: 65upx;
+				border-radius: 50%;
+				overflow: hidden;
+				margin-right: 30upx;
+				image{
+					width: 65upx;
+					height: 65upx;
+				}
+			}
+			.alt-content{
+				width: 72%;
+				background-color:white;
+				padding: 15upx 30upx 15upx 15upx;
+				border-radius: 8upx;
+				font-size: 27upx;
+				word-break: break-all;
+			}
+		}
+		.phine-server{
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+			background-color: white;
+			padding: 20upx 0;
+			box-sizing:border-box;
+			.kefu{
+				width: 100%;
+				background-color: white;
+				font-size: 24upx;
+				font-family: PingFang SC;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				
+			}
+			.kefu::after{
+				border: none;
+			}
+			image{
+				width: 35rpx;
+				height: 35rpx;
+				margin-right: 20rpx;
+			}
+		}
 		.left{
 			padding: 40upx 20upx;
 			border-bottom: 20rpx solid #f7f7f7;
@@ -344,57 +395,17 @@
 				}
 			}
 		}
-		.system{
-			height: 100%;
-			background-color:#f6f6f6;
-			.conversation{
-				width: 100%;
-				padding: 40upx;
-				display: flex;
-				box-sizing: border-box;
-				.alturl{
-					width: 65upx;
-					height: 65upx;
-					border-radius: 50%;
-					overflow: hidden;
-					margin-right: 30upx;
-					image{
-						width: 65upx;
-						height: 65upx;
-					}
-				}
-				.alt-content{
-					width: 72%;
-					background-color:white;
-					padding: 15upx 30upx 15upx 15upx;
-					border-radius: 8upx;
-					font-size: 27upx;
-				}
-			}
-			.phine-server{
-				position: fixed;
-				bottom: 0;
-				width: 100%;
-				background-color: white;
-				padding: 20upx 0;
-				.kefu{
-					width: 100%;
-					background-color: white;
-					font-size: 24upx;
-					font-family: PingFang SC;
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					
-				}
-				.kefu::after{
-					border: none;
-				}
-				image{
-					width: 35rpx;
-					height: 35rpx;
-					margin-right: 20rpx;
-				}
-			}
-		}
+	}
+	.add-height{
+		height: 80upx;
+		width: 100%;
+	}
+	.none{
+		height: 100%;
+		background-color:#f6f6f6
+	},
+	.add{
+		height: '';
+		min-height: 700upx;
+		background-color:#f6f6f6
 	}

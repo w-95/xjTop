@@ -10,14 +10,14 @@
 		</view>
 		<view class="service-and-specil">
 			<!-- <input class="uni-input" confirm-type='search' placeholder="请输入用户昵称"/> -->
-			<view class="service-column-wrapper animated fadeInLeft" v-if="activeTitleItem == 1">
+			<view class="service-column-wrapper animated fadeInLeft" v-if="activeTitleItem == 0">
 				<view class="tipss" v-if='followList.length <= 0'>
 					<image src="../../static/images/no-comment.png" mode="" alt='i.alt' mode="widthFix" ></image>
 					<view>暂无更多关注列表!</view>
 				</view>
 				<ListBox :listBox='followList' type='' v-else></ListBox>
 			</view>
-			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem == 2">
+			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem == 1">
 				<view class="tipss" v-if='fansList.length <= 0'>
 					<image src="../../static/images/no-comment.png" mode="" alt='i.alt' mode="widthFix" ></image>
 					<view>暂无更多粉丝列表!</view>
@@ -41,29 +41,29 @@
 		data() {
 			return {
 				userId: '',
-				activeTitleItem: 1,
+				activeTitleItem: 0,
 				areaTitleList: [{
-					id: 1,
+					id: 0,
 					num: 4,
 					label: '关注'
 				},{
-					id: 2,
+					id: 1,
 					num: 20,
 					label: '粉丝'
 				}],
-				DomainType: 1,
-				followList:[]
+				DomainType: 0,
+				followList:[],
+				fansList: []
 			}
 		},
 		components: {
 			Post,comment,ListBox
 		},
 		onLoad(e) {
-			console.log(e)
 			if(e.id){
 				this.userId = e.id
 			}
-			this.init()
+			this.init(0)
 		},
 		created(){
 			uni.showLoading({
@@ -80,33 +80,25 @@
 		computed: {
 			...mapState(['auth']),
 		},
-		onShow() {
-			// this.init(this.DomainType)
-		},
+		onShow() {},
 		methods: {
 			init(type){
 				let that = this;
 				uni.hideLoading();
-				http.getFollowList({userId: that.auth.userId}).then(data => {
-					that.followList = data
-					
-				})
-				// this.getFollowList()
+				this.getFollowList(0)
 			},
-			// 下拉刷新
-			onPullDownRefresh() {
-				
-			},
-			// 上拉加载
-			onReachBottom: function() {
-				
-			},
-			getFollowList(){
+			getFollowList(type){
 				let params = {
-					userId: this.userId
+					userId: this.userId,
+					type: this.DomainType
 				}
 				http.getFollowList(params).then(res =>{
-					console.log(res)
+					uni.hideLoading();
+					if(this.DomainType == 0){
+						this.followList = res
+					}else{
+						this.fansList = res
+					}
 				})
 			},
 			handleColumnTap(item){
@@ -116,12 +108,8 @@
 					icon: 'loading'
 				});
 				this.activeTitleItem = item.id
-				if(item.id == 1){ 
-					this.DomainType = 1
-				}else {
-					this.DomainType = 0
-				}
-				this.init(this.DomainType)
+				this.DomainType = item.id
+				this.getFollowList()
 			},
 			
 		}

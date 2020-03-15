@@ -43,9 +43,7 @@
 		},
 		components: {},
 		onLoad(e) {},
-		created(){
-			console.log(this.listBox)
-		},
+		created(){},
 		onReady() {},
 		computed: {
 			...mapState(['province', 'auth']),
@@ -60,7 +58,6 @@
 		width: 100%;
 		box-sizing: border-box;
 		.list-box{
-			// width: 100%;
 			box-sizing: border-box;
 			padding: 20upx;
 			display: flex;

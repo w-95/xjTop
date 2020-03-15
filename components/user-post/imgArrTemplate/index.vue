@@ -21,7 +21,6 @@
 				type: Array,
 				default: () => []
 			}
-			
 		},
 		watch: {},
 	}

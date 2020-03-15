@@ -19,17 +19,9 @@
 			</view>
 			
 			<view class='img-list' v-if='item.offered'>
-				<!-- <image src='../../static/images/bgc.jpeg'></image> -->
-				<!-- <image src='../../static/images/bgc.jpeg'></image> -->
-				<!-- <image src='../../static/images/bgc.jpeg'></image> -->
 			</view>
 			<view class="content" v-else>
 				<view v-html="item.articleContent.textContent.replace(/(\r\n|\n|\r|↵)/gm, '<br/>')" class="text-content"></view>
-				<!-- <view v-if="item.articleContent.imgArr.length > 0" class='img-box' >
-					<view class="item" v-for='(i,idx) in item.articleContent.imgArr' :key='idx'>
-						<image :src="i.src" mode="aspectFill" alt='i.alt'></image>
-					</view>
-				</view> -->
 				<img-arr v-if='item.articleContent.imgArr.length > 0' :imgArr = 'item.articleContent.imgArr'></img-arr>
 			</view>
 			<!-- user部分 -->
@@ -99,13 +91,8 @@
 			})
 			this.setDeailDataList()
 			uni.hideToast()
-			this.$nextTick(()=>{
-				console.log('组件渲染完成')
-			})
 		},
-		onShow() {
-			
-		},
+		onShow() {},
 		methods: {
 			...mapMutations(['setOidVal','setDetailData']),
 			aa(val){
@@ -125,7 +112,6 @@
 				if(this.deailDataList){
 					for(let i = 0;i < this.deailDataList.length;i++){
 						this.deailDataList[i].articleContent = this.deailDataList[i].articleContent.replace(this.deailDataList[i].articleTitle,'')
-						
 						let arr = [],newArr=[];
 						let obj = {
 							isImg: false,
@@ -155,7 +141,6 @@
 						this.deailDataList[i].articleContent = obj
 					}
 					this.dataList = this.deailDataList
-					console.log(this.dataList)
 				} 
 			}
 		}
@@ -174,7 +159,6 @@
 			box-sizing: border-box;
 			display: flex;
 			align-items: center;
-			// padding: 0 20upx;
 			.title-logo{
 				font-size: 24upx;
 				background-color: #FFF2F3;
@@ -206,8 +190,6 @@
 				align-items: center;
 				box-sizing:border-box;
 				justify-content:flex-end;
-				// padding: 0 20upx;
-				// margin-top: 18upx;
 				.item{
 					font-family:PingFang SC;
 					box-sizing: border-box;
@@ -324,10 +306,8 @@
 				     letter-spacing: 1rpx;
 					 /deep/ .pho{
 						color: red;
-						// font-size: 38upx;
 					}
 					.pho{
-					  	// font-size: 28upx;
 						font-weight: bold;
 					}
 				}
@@ -349,7 +329,6 @@
 			display: flex;
 			font-family:PingFang SC;
 			font-size: 24upx;
-			// border: 1px solid red;
 			justify-content: space-between;
 			margin-top: 15upx;
 			box-sizing: border-box;

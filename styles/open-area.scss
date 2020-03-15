@@ -162,5 +162,26 @@
 				color: white;
 				background-color: #2EE3A5;
 			}
+			.kefu{
+				width: 80%;
+				padding: 10upx;
+				background-color: #E6E6E6;
+				font-size: 24upx;
+				margin-top: 30upx;
+				font-family: PingFang SC;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				image{
+					width: 35rpx;
+					height: 35rpx;
+					margin-right: 20rpx;
+				}
+				
+			}
+			.kefu::after{
+				border: none;
+			}
+			
 		}
 	}

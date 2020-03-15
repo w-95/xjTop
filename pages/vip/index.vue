@@ -34,7 +34,6 @@
 			    title: '选择领域' 
 			})
 			this.userId = e.id
-			// this.getParams('15311339974')
 			if(e.id && e.id != ''){
 				this.getParams(e.id)
 			}

@@ -46,13 +46,10 @@
 					uni.hideLoading()
 				},
 				fail(err){
-					console.log(err)
 					uni.hideLoading()
 				}
 			})
 		}
-		
-		
     }
 </script>
 

@@ -41,13 +41,11 @@
 					icon: 'loading'
 				})
 				http.searchKeyWord({keyword: event.detail.value}).then(data =>{
-					console.log(data)
 					this.listArr = data
 					uni.hideToast()
 				})
 			},
 			clearVal(){
-				console.log(123)
 				this.iptVal = ''
 			},
 			goDetail(item){
