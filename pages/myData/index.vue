@@ -6,7 +6,7 @@
 				<view v-for="(t, i) in areaTitleList" :key="t.id" :class="activeTitleItem == t.id ? 'title-item active' : 'title-item'"
 					@click="handleColumnTap(t)">
 					<text>{{t.label}}</text>
-					<view class='dot' v-if='t.id == 4'></view>
+					<view class='dot' v-if="t.id == 4 && showSystemDot == 'true'"></view>
 				</view>
 			</view>
 		</view>
@@ -101,7 +101,7 @@
 				repliesArr: null,
 				postArr: null,
 				vipTitle: '',
-				
+				showSystemDot: 'false',
 				start: '',
 				loadingType: 0,//定义加载方式 0---contentdown  1---contentrefresh 2---contentnomore
 				contentText: {
@@ -117,9 +117,13 @@
 			Post,comment,ListBox,titleData
 		},
 		onLoad(e) {
+			console.log(e)
 			let that = this
 			if(e.typeid){
-				that.activeTitleItem = e.typeid
+				that.activeTitleItem = e.typeid;
+			}
+			if(e.showSystemDot){
+				that.showSystemDot = e.showSystemDot
 			}
 			this.userId = e.id
 			uni.showToast({
@@ -143,7 +147,13 @@
 			commentItem(){
 				
 			},
+			//获取系统消息
 			systemMessage(id){
+				this.showSystemDot = 'false'
+				uni.setStorage({
+					key: "systemNews",
+					data: new Date().getTime()
+				})
 				this.activeTitleItem = id;
 				let params = {
 					userId: this.auth.userId

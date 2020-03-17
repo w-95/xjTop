@@ -120,11 +120,11 @@
 					}
 				}
 				.dot{
-					width: 30upx;
-					height: 30upx;
+					width: 5px;
+					height: 5px;
+					background-color: #FF0000;
+					border-radius: 50%;
 					position: absolute;
-					background-image: url('../../static/images/dot.png');
-					background-repeat: no-repeat;
 					top: -6upx;
 					right: 25upx;
 				}
@@ -155,12 +155,12 @@
 				height: 40upx;
 			}
 			.dot{
-				width: 30upx;
-				height: 30upx;
+				width: 5px;
+				height: 5px;
+				background-color: #FF0000;
+				border-radius: 50%;
 				position: absolute;
-				background-image: url('../../static/images/dot.png');
-				background-repeat: no-repeat;
-				top: -6upx;
+				top: 8upx;
 				right: 18upx;
 			}
 		}

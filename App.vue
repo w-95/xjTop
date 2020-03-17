@@ -19,7 +19,6 @@
 			getOpenId(res){
 				let that = this;
 				http.getWxchatOpenid({code: res.code}).then(data =>{
-					console.log('拿code换来的openid===',JSON.stringify(data))
 					that.setOpenData(data)
 					//用户之前同意授权直接登录
 					that.getUserType()
@@ -67,7 +66,6 @@
 				provider: 'weixin',
 				success: function (res) {
 					//拿code换取openId
-					console.log('登录的code===',res.code)
 					that.getOpenId(res)
 				}
 			});

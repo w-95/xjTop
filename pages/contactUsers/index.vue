@@ -1,8 +1,8 @@
 <template>
-	<view class='page'>
+	<view :class="userMessageList.length > 0 ? 'page' : 'pages'">
 		<view class='message-tips'>
 			<view>尊敬的管理员:</view>
-			<view>您正在联系用户【十八】;如对方回复会使用客服进行沟通</view>
+			<view>您正在联系用户【{{userName}}】;如对方回复会使用客服进行沟通</view>
 		</view>
 		<view class='add-height'></view>
 		<view class='conversation' v-for="(item,index) in userMessageList" :key='index'>
@@ -34,7 +34,8 @@
 				placeholderVal: '请输入内容',
 				messageVal: '',
 				showPopupBottom: true,
-				userId: ''
+				userId: '',
+				userName: ''
 			}
 		},
 		created(){
@@ -49,8 +50,10 @@
 			
 		},
 		onLoad(e){
-			if(e.id){
-				this.userId = e.id
+			console.log(e)
+			if(e.id && e.name){
+				this.userId = e.id;
+				this.userName = e.name;
 			}
 			this.init()
 		},
@@ -102,6 +105,7 @@
 				}
 				http.rootSendMessage(params).then(res =>{
 					this.init()
+					this.messageVal = ''
 				})
 			}
 		}
@@ -109,13 +113,18 @@
 </script>
 
 <style lang='scss' scoped>
-	.page{
+	.pages{
+		position: absolute;
+		top:0;
+		left:0;
+		bottom:0;
 		width: 100%;
-		position:absolute;
-		top: 0upx;
 		box-sizing: border-box;
-		left: 0;
-		bottom: 0;
+		background-color:#f6f6f6;
+	}
+	.page,.pages{
+		width: 100%;
+		box-sizing: border-box;
 		background-color:#f6f6f6;
 		.add-height{
 			height: 110upx;
@@ -131,18 +140,16 @@
 			padding: 20upx;
 			font-size:28upx;
 			font-family:PingFang SC;
-			opacity: 0.5;
 			top: 20upx;
 			left: 19upx;
 			height: 110upx;
 		}
 		.conversation{
 			width: 100%;
-			padding: 40upx;
+			padding: 40rpx 40rpx 40rpx 150rpx;
 			display: flex;
 			box-sizing: border-box;
-			position: relative;
-			margin-bottom: 50upx;
+			background-color:#f6f6f6;
 			.alturl{
 				position:absolute;
 				right: 20upx;
@@ -157,15 +164,18 @@
 				}
 			}
 			.alt-content{
-				position:absolute;
-				right: 108upx;
-				width: 65%;
+				width: 75%;
 				background-color:white;
 				padding: 15upx 30upx 15upx 15upx;
 				border-radius: 8upx;
 				font-size: 27upx;
+				word-break: break-all;
 			}
 		}
+	}
+	.height{
+		width: 100%;
+		height: 110upx;
 	}
 	.bottom{
 		font-family:PingFang SC;

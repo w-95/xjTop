@@ -81,8 +81,9 @@
 				})
 			},
 			gocontactUsers(item){
+				console.log(item)
 				uni.navigateTo({
-					url: '../contactUsers/index?id='+item.oId
+					url: '../contactUsers/index?id='+item.oId+'&name='+item.userName
 				})
 			}
 		}
@@ -159,7 +160,7 @@
 				}
 			}
 			.message{
-				width: 50%;
+				width: 60%;
 				font-family:PingFang SC;
 				font-size: 24upx;
 				line-height: 50upx;

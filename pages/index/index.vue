@@ -41,7 +41,7 @@
 		<view class="my-data" @click="goMyDetail">
 			<image src="../../static/images/login.png" mode=""></image>
 			<view>我的</view>
-			<view class='dot'></view>
+			<view class='dot' v-show='showSystemDot'></view>
 		</view>
 		<view class="is-domain" @click="choiceField">
 			<!-- <image src="../../static/images/bianji.png" mode=""></image> -->
@@ -117,8 +117,9 @@
 					personnel: {  //技术人才
 						time: '',
 						title: '技术人才'
-					}        
-				}
+					}      
+				},
+				showSystemDot: false
 			}
 		},
 		components: {
@@ -156,6 +157,17 @@
 		onReady() {},
 		computed: {
 			...mapState(['province', 'auth']),
+			systemDot() {
+				let that = this;
+				if(this.auth != null && this.auth.userId){
+					let params = {
+						userId: this.auth.userId
+					}
+					http.getRootUserMessage(params).then(res => {
+						that.searchSystemNews(res[res.length-1].sendTime)
+					})
+				}
+			}
 		},
 		onShareAppMessage(res) {
 		    return {
@@ -169,6 +181,7 @@
 		onShow() {
 			let that = this
 			that.init('init')
+			that.newSystemDot()
 		},
 		methods: {
 			init(type){
@@ -183,8 +196,35 @@
 				});
 				that.show = true
 				that.searchDomainNews()
-				
 				that.getListName(type)
+			},
+			newSystemDot() {
+				let that = this;
+				if(this.auth != null && this.auth.userId){
+					let params = {
+						userId: this.auth.userId
+					}
+					http.getRootUserMessage(params).then(res => {
+						that.searchSystemNews(res[res.length-1].sendTime)
+					})
+				}
+			},
+			//查询是否有新的系统消息
+			searchSystemNews(time){
+				let that = this;
+				uni.getStorage({
+					key: "systemNews",
+					success(e){
+						if(e.data < time){
+							that.showSystemDot = true
+						}else {
+							that.showSystemDot = false
+						}
+					},
+					fail(){
+						that.getDomain()	
+					}
+				})
 			},
 			//查询领域是否有新帖子
 			searchDomainNews(){
@@ -342,7 +382,7 @@
 					that.getUserDefault(that.auth.userId).then(res =>{
 						if(res){
 							uni.navigateTo({
-								url: '../myData/index?id='+that.auth.userId
+								url: '../myData/index?id='+that.auth.userId+'&showSystemDot='+that.showSystemDot
 							})
 						}else{
 							uni.navigateTo({

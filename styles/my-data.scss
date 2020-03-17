@@ -190,11 +190,11 @@
 					// margin-right: 62upx;
 				}
 				.dot{
-					width: 30upx;
-					height: 30upx;
+					width: 5px;
+					height: 5px;
+					background-color: #FF0000;
+					border-radius: 50%;
 					position: absolute;
-					background-image: url('../../static/images/dot.png');
-					background-repeat: no-repeat;
 					top: -6upx;
 					right: -12upx;
 				}

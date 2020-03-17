@@ -72,7 +72,7 @@
 					for(let i of res){
 						i.userUpdateTime= time.formatTime(i.userUpdateTime,"Y-M-D h:m:s")
 					}
-					that.userList= arr;
+					that.userList= res;
 					uni.hideLoading()
 				})
 			}
