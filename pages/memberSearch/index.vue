@@ -93,7 +93,7 @@
 				icon: 'loading'
 			});
 			uni.setNavigationBarTitle({
-			    title: '领域查询' 
+			    title: '管理员'
 			})
 		},
 		onReady() {},
@@ -105,19 +105,18 @@
 		},
 		methods: {
 			init(type){
+				console.log(type)
 				let that = this,arr=[];
 				http.getApplyDomains({type:type}).then(data => {
 					if(type == 1) {
-						arr = data.sort(function(a,b){return a.userCreateTime-b.userCreateTime})
-					}else {
-						arr = data.sort(function(a,b){return a.userCreateTime-b.userCreateTime})
+						arr = data.sort(function(a,b){return b.userCreateTime-a.userCreateTime})
+					}else if(type == 0) {
+						arr = data.sort(function(a,b){return b.userEndTime-a.userEndTime})
 					}
-					if(data.length > 0){
-						for(let i of arr){
+					for(let i of arr){
+						if(i.userEndTime){
+							i.userEndTime = time.formatTime(i.userEndTime,"Y-M-D h:m:s").substring(5);
 							i.userCreateTime = time.formatTime(i.userCreateTime,"Y-M-D h:m:s").substring(5);
-							if(i.userEndTime){
-								i.userEndTime = time.formatTime(i.userEndTime,"Y-M-D h:m:s").substring(5);
-							}
 						}
 					}
 					that.arrData = arr || []
@@ -143,6 +142,7 @@
 					mask: true,
 					icon: 'loading'
 				});
+				this.arrData = []
 				this.activeTitleItem = item.id
 				this.DomainType = item.id
 				if(item.id == 1){ 

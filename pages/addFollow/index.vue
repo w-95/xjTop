@@ -1,6 +1,6 @@
 <template>
 	<view class="box">
-		<titleData :isShowFans='true' :isShowFollow='true' :authData='detailAuthData' :isAuth='false'></titleData>
+		<titleData :isShowFans='true' :isShowFollow='true' :authData='detailAuthData' :isAuth='false' :type='detail'></titleData>
 		<view class="service-and-specil">
 			<view class="title-box">
 				<view v-for="(t, i) in areaTitleList" :key="t.id" :class="activeTitleItem == t.id ? 'title-item active' : 'title-item'"
@@ -76,6 +76,7 @@
 				    contentnomore: '没有更多数据了' //else
 				},
 				showLoadType: true,
+				detail: 'detail'
 			}
 		},
 		components: {

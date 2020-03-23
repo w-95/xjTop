@@ -1,6 +1,75 @@
 <template>
 	<view class='box-item'>
-		<view v-for='(item,index) in listBox' :key='index' class='list-box'>
+		<view v-for='(item,index) in listBox' :key='index' class='list-box' v-if="type == 'apply'">
+			<view class='logo-icon'>
+				<image :src="item.user.userAvatarURL || item.userAvatarURL" mode="widthFix"></image>
+			</view>
+			<view class='content-item'>
+				<view class='title'>
+					<text>{{item.user.userName}}</text>
+					<view>申请：{{item.userCreateTime}}</view>
+					<view class='end'>开通：{{item.userEndTime}}</view>
+				</view>
+				<view class='title-bom'>
+					<text>{{item.domainURI}}</text>
+				</view>
+			</view>
+			<view class='right-item' @click='goOpenArea(item)'>
+				去开通
+				<image src="../../../static/images/right.png" mode="widthFix"></image>
+			</view>
+			<view class='right-tong' v-if="type == 'alreadyOpened'">
+				<image src="../../../static/images/tong.png" mode="widthFix"></image>
+			</view>
+			<view class='time'>{{item.sendTime}}</view>
+		</view>
+		<view v-for='(item,index) in listBox' :key='index' class='list-box' v-if="type == 'alreadyOpened'">
+			<view class='logo-icon'>
+				<image :src="item.user.userAvatarURL || item.userAvatarURL" mode="widthFix"></image>
+			</view>
+			<view class='content-item'>
+				<view class='title'>
+					<text>{{item.user.userName}}</text>
+					<view>申请：{{item.userCreateTime}}</view>
+					<view class='end'>开通：{{item.userEndTime}}</view>
+				</view>
+				<view class='title-bom'>
+					<text>{{item.domainURI}}</text>
+				</view>
+			</view>
+			<view class='right-tong' v-if="type == 'alreadyOpened'">
+				<image src="../../../static/images/tong.png" mode="widthFix"></image>
+				<!-- <image src="../../../static/images/no-tong.png" mode="widthFix"></image> -->
+			</view>
+			<view class='time'>{{item.sendTime}}</view>
+		</view>
+		<button open-type='contact'  session-from='weapp' v-for='(item,index) in listBox' :key='index' class='list-box' v-if="type == 'message'">
+			<view class='logo-icon'>
+				<image :src="item.user.userAvatarURL || item.userAvatarURL" mode="widthFix"></image>
+			</view>
+			<view class='message message-name'>
+				<view>{{item.user.userName}}</view>
+				<view class='mesage-text'>{{item.message}}</view>
+			</view>
+			<view class='time'>{{item.sendTime}}</view>
+		</button>
+		
+		<view v-for='(item,index) in listBox' :key='index' class='list-box' v-if="type == 'userList'">
+			<view class='logo-icon'>
+				<image :src="item.user.userAvatarURL || item.userAvatarURL" mode="widthFix"></image>
+			</view>
+			<view class='time'>{{item.sendTime}}</view>
+			<view class='message'>
+				<view>{{item.userName}}</view>
+				<view class='mesage-text'>加入时间:{{item.userUpdateTime}}</view>
+			</view>
+			<view class='right-item' @click='gocontactUsers(item)'>
+				联系用户
+				<image src="../../../static/images/right.png" mode="widthFix"></image>
+			</view>
+		</view>
+		
+		<!-- <view v-for='(item,index) in listBox' :key='index' class='list-box' v-if='true'>
 			<view class='logo-icon'>
 				<image :src="item.user.userAvatarURL || item.userAvatarURL" mode="widthFix"></image>
 			</view>
@@ -20,7 +89,6 @@
 			</view>
 			<view class='right-tong' v-if="type == 'alreadyOpened'">
 				<image src="../../../static/images/tong.png" mode="widthFix"></image>
-				<!-- <image src="../../../static/images/no-tong.png" mode="widthFix"></image> -->
 			</view>
 			<view v-if="type == 'message'" class='message'>
 				<view>{{item.user.userName}}</view>
@@ -35,7 +103,7 @@
 				联系用户
 				<image src="../../../static/images/right.png" mode="widthFix"></image>
 			</view>
-		</view>
+		</view> -->
 		<view class='service' @click='goService' v-if="type == 'message'">
 			<image src='../../../static/images/tips.png'></image>
 			<view>客服</view>
@@ -62,7 +130,7 @@
 		components: {},
 		onLoad(e) {},
 		created(){
-			
+			console.log(this.type)
 		},
 		onReady() {},
 		computed: {
@@ -85,6 +153,23 @@
 				uni.navigateTo({
 					url: '../contactUsers/index?id='+item.oId+'&name='+item.userName
 				})
+			},
+			goService(){
+				console.log(11)
+				uni.navigateToMiniProgram({
+				  appId: 'wx277c9f1d194fce2f',
+				  path: '',
+				  success(res) {
+					  console.log(res)
+				    // 打开成功
+				  },
+				  fail(err){
+					  console.log(err)
+				  },
+				  complete(tips) {
+					  console.log(tips)
+				  }
+				})
 			}
 		}
 	}
@@ -94,14 +179,16 @@
 	.box-item{
 		width: 100%;
 		box-sizing: border-box;
+		.list-box::after{ border: none;}
 		.list-box{
 			// width: 100%;
 			box-sizing: border-box;
-			padding: 5upx 20upx;
+			padding: 5upx 35upx;
 			display: flex;
 			align-items: center;
 			justify-content:space-between;
 			border-bottom: 1px solid rgba(238,238,238,1);
+			background-color:white;
 			.logo-icon{
 				width: 100upx;
 				height: 100upx;
@@ -159,6 +246,11 @@
 					height: auto;
 				}
 			}
+			.message-name{
+				view{
+					text-align: left
+				}
+			}
 			.message{
 				width: 60%;
 				font-family:PingFang SC;
@@ -199,5 +291,9 @@
 			width: 40rpx;
 			height: 40rpx;
 		}
+	}
+	.kefu{
+		width: 100%;
+		display: flex;
 	}
 </style>

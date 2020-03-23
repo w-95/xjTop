@@ -78,6 +78,10 @@
 			isAuth: {
 				type: Boolean,
 				default: true
+			},
+			type: {
+				type: String,
+				default: 'my'
 			}
 		},
 		computed: {
@@ -87,8 +91,26 @@
 			if(this.isShowFollow){
 				this.isFollow()
 			}
+			console.log(this.type)
+			this.getCount()
 		},
 		methods: {
+			//获取粉丝，关注count
+			getCount(){
+				let params = {
+					userId: ''
+				}
+				if(this.type == 'my'){
+					params.userId = this.auth.userId
+					console.log(this.auth)
+				}else if(this.type == 'detail'){
+					params.userId = this.authData.articleAuthorId || this.authData.userId;
+				}
+				http.getFansCount(params).then(res => {
+					this.followTabParams[0].count = res.gzCount;
+					this.followTabParams[1].count = res.fsCount
+				})
+			},
 			//获取关注状态
 			isFollow(){
 				let params = {
@@ -100,8 +122,10 @@
 				})
 			},
 			goFollow(){
+				let id = +this.authData.articleAuthorId || this.authData.userId;
+				let name = this.authData.articleAuthorName || this.authData.userName;
 				uni.navigateTo({
-					url: '../followTab/index?id='+this.authData.articleAuthorId
+					url: '../followTab/index?id='+id+'&name='+name
 				})
 			},
 			addFollow(type){

@@ -3,8 +3,8 @@
 		<view class="box">
 			<icon type="search" size="15" color='#999999'></icon>
 			<input class="uni-input" confirm-type='search' placeholder="搜索" @input ="changeInput" @click='getFocus' :focus="false" disabled=true/>
-			<!-- <button type="primary" @click='goMember' class='juris-diction-btn' v-if="auth!=null && auth.userRole == 'adminRole'">管理员</button> -->
-			<button type="primary" @click='goMember' class='juris-diction-btn'>管理员</button>
+			<button type="primary" @click='goMember' class='juris-diction-btn' v-if="auth!=null && auth.userRole == 'adminRole'">管理员</button>
+			<!-- <button type="primary" @click='goMember' class='juris-diction-btn'>管理员</button> -->
 		</view>
 		<view class="title" v-if="doMainData.length > 0">
 			<view></view>
@@ -177,6 +177,7 @@
 		 },
 		created(){
 			// this.init('init')
+			
 		},
 		onShow() {
 			let that = this
@@ -222,7 +223,7 @@
 						}
 					},
 					fail(){
-						that.getDomain()	
+						// that.getDomain()	
 					}
 				})
 			},
@@ -408,11 +409,10 @@
 			},
 			//获取领域列表
 			getDomain(val){
+				console.log(val)
 				let that = this
 				http.getUserList({userId: ''}).then(data => {
 					if(data.code == 0){
-						that.doMainData = data.data
-						that.isInitLoading = false
 						if(!val){
 							for(let i of data.data){
 								i.isNews = true
@@ -424,11 +424,18 @@
 										j.isNews = true
 									}
 									if(val[i].title == j.domainTitle && val[i].time!= '' && j.latestTime > val[i].time){
+										console.log(j.latestTime , val[i].time,'111')
 										j.isNews = true
+									}else if(val[i].title == j.domainTitle && val[i].time!= '' && j.latestTime < val[i].time){
+										console.log(j.latestTime , val[i].time,'222')
+										j.isNews = false
 									}
 								}
 							}
 						}
+						that.doMainData = data.data;
+						console.log(that.doMainData)
+						that.isInitLoading = false
 						uni.hideLoading()
 					}
 					

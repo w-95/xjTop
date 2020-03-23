@@ -89,7 +89,9 @@
 				
 			},
 			getFocus(){
-				
+				uni.navigateTo({
+					url: '../searchUser/index'
+				})
 			},
 			goSearch(){
 				

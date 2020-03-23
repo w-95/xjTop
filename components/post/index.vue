@@ -99,6 +99,7 @@
 				return val.replace(/(\r\n|\n|\r|↵)/gm, '<br/>')
 			},
 			goComment (item) {
+				console.log(item)
 				this.setOidVal(item.oId)
 				this.setDetailData({
 					id: item.oId,

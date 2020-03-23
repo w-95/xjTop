@@ -65,7 +65,10 @@
             "scope.userLocation" : {
                 "desc" : "鞋匠咨派"
             }
-        }
+        },
+		"navigateToMiniProgramAppIdList" : [
+		    "wx277c9f1d194fce2f"
+		]
     },
     "mp-alipay" : {
         "usingComponents" : true

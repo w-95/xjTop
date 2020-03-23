@@ -15,8 +15,8 @@
 				</view>
 			</view>
 			<view class='right-tong' v-if="type == 'alreadyOpened'">
-				<image src="../../../static/images/tong.png" mode="widthFix" v-show='!item.isExpired && item.isOnline == 0'></image>
-				<image src="../../../static/images/no-tong.png" mode="widthFix" v-show='item.isExpired'></image>
+				<image src="../../../static/images/tong.png" mode="widthFix" v-if='!item.isExpired && item.isOnline == 0'></image>
+				<image src="../../../static/images/no-tong.png" mode="widthFix" v-else></image>
 			</view>
 		</view>
 	</view>
@@ -43,7 +43,9 @@
 		},
 		components: {},
 		onLoad(e) {},
-		created(){},
+		created(){
+			
+		},
 		onReady() {},
 		computed: {
 			...mapState(['province', 'auth']),

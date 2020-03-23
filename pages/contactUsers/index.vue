@@ -8,7 +8,8 @@
 		<view class='conversation' v-for="(item,index) in userMessageList" :key='index'>
 			<view class='alt-content'>{{item.message}}</view>
 			<view class='alturl'>
-				<image :src="item.user.userAvatarURL"></image>
+				<!-- <image :src="item.user.userAvatarURL"></image> -->
+				<image src="http://xjm.cachito.top/FgEr6yw6JES3169ovJ2ZjpxQoete"></image>
 			</view>
 		</view>
 		<view class='height'></view>
@@ -143,6 +144,7 @@
 			top: 20upx;
 			left: 19upx;
 			height: 110upx;
+			z-index: 2
 		}
 		.conversation{
 			width: 100%;
@@ -158,6 +160,7 @@
 				border-radius: 50%;
 				overflow: hidden;
 				margin-left: 30upx;
+				z-index: 1;
 				image{
 					width: 65upx;
 					height: 65upx;
@@ -183,6 +186,7 @@
 		box-sizing: border-box;
 		width: 750upx;
 		bottom: 0;
+		z-index: 2;
 		background-color: white;
 		display: flex;
 		align-items:center;

@@ -130,6 +130,10 @@ var checkFollow = function(e){
 var searchUser = function(e){
 	return config.getRequest('search/user',e)
 }
+//获取关注粉丝count
+var getFansCount = function(e){
+	return config.getRequest('count/follow',e)
+}
 module.exports = {
     getDomain,
 	getDomainList,
@@ -163,5 +167,6 @@ module.exports = {
 	getRootUserMessage,
 	rootSendMessage,
 	checkFollow,
-	searchUser
+	searchUser,
+	getFansCount
 }

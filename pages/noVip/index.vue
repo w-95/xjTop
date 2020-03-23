@@ -38,7 +38,8 @@
 		data() {
 			return {
 				phone: '13006617634',
-				userData: {}
+				userData: {},
+				
 			}
 		},
 		onLoad(e){
@@ -54,9 +55,43 @@
 			})
 			uni.hideToast()
 		},
-		methods:{
+		created(){},
+		methods:{ 
+			//开启订阅消息
+			openMsg() {
+			    var that = this
+			    // 获取用户的当前设置，判断是否点击了“总是保持以上，不在询问”
+			    wx.getSetting({
+			        withSubscriptions:true,  //是否获取用户订阅消息的订阅状态，默认false不返回
+					success(res) {
+						console.log(res)
+						if(res.authSetting['scope.subscribeMessage']) { //用户点击了“总是保持以上，不再询问”
+							uni.openSetting({ // 打开设置页
+								success(res) {
+									// that.setCloud()
+								}
+							});
+						}else { // 用户没有点击“总是保持以上，不再询问”则每次都会调起订阅消息
+							var templateid = that.setting.templateid.map(item => item.tempid)
+							uni.requestSubscribeMessage({
+								tmplIds: ['KohP-FGpzCeJNYdw9xrn9ru1ojglnmnEzNzHpxMDUBM','UPKS3vw8D4tv8z4iOU5lvoHx_ViP17rs8HDA4t8DST4'],
+								success (res) { 
+									console.log(res)
+								},
+								fail (res) {  
+									console.log("fail:"+res);  
+								 },  
+								 complete (res) {  
+									 console.log("complete:"+res);  
+								 }  
+							})
+						}
+					}
+			    })
+			},
 			//权限申请
 			openVip(){
+				this.openMsg()
 				if(JSON.stringify(this.userData) != '{}'){
 					let params = {
 						userId: this.userData.uid,

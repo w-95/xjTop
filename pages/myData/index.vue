@@ -1,6 +1,6 @@
 <template>
 	<view class="box">
-		<titleData :isShowFans='false' :isShowFollow='false' :authData='auth' :isAuth='true'></titleData>
+		<titleData :isShowFans='true' :isShowFollow='false' :authData='auth' :isAuth='true' :type="my"></titleData>
 		<view class="service-and-specil">
 			<view class="title-box">
 				<view v-for="(t, i) in areaTitleList" :key="t.id" :class="activeTitleItem == t.id ? 'title-item active' : 'title-item'"
@@ -36,7 +36,7 @@
 			<view class="service-column-wrapper animated fadeInRight" v-if="activeTitleItem == 4" :class="[rootMessageList.length > 0 ? 'none' : 'add']">
 				<view class='conversation'v-for='(item,index) in rootMessageList' :key='index'>
 					<view class='alturl'>
-						<image :src="item.user.userAvatarURL"></image>
+						<image src="http://xjm.cachito.top/FgEr6yw6JES3169ovJ2ZjpxQoete"></image>
 					</view>
 					<view class='alt-content'>{{item.message}}</view>
 				</view>
@@ -110,7 +110,8 @@
 				    contentnomore: '没有更多数据了' //else
 				},
 				showLoadType: true,
-				rootMessageList:[]
+				rootMessageList:[],
+				my: 'my'
 			}
 		},
 		components: {
@@ -300,6 +301,7 @@
 							}
 						}
 						that.arrData = arr
+						console.log(that.arrData)
 					})
 					uni.hideToast()
 					that.activeTitleItem = id

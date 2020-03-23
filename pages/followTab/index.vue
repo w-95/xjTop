@@ -63,6 +63,9 @@
 			if(e.id){
 				this.userId = e.id
 			}
+			uni.setNavigationBarTitle({
+			    title: e.name
+			})
 			this.init(0)
 		},
 		created(){
@@ -71,9 +74,7 @@
 				mask: true,
 				icon: 'loading'
 			});
-			uni.setNavigationBarTitle({
-			    title: '领域查询' 
-			})
+			
 			
 		},
 		onReady() {},
@@ -92,12 +93,19 @@
 					userId: this.userId,
 					type: this.DomainType
 				}
+				let obj = {}
 				http.getFollowList(params).then(res =>{
 					uni.hideLoading();
 					if(this.DomainType == 0){
-						this.followList = res
+						this.followList = res.reduce((cur,next) => {
+							obj[next.followedUserId] ? "" : obj[next.followedUserId] = true && cur.push(next);
+							return cur;
+						},[]) //设置cur默认类型为数组，并且初始值为空的数组
 					}else{
-						this.fansList = res
+						this.fansList = res.reduce((cur,next) => {
+							obj[next.followedUserId] ? "" : obj[next.followedUserId] = true && cur.push(next);
+							return cur;
+						},[]) //设置cur默认类型为数组，并且初始值为空的数组
 					}
 				})
 			},
