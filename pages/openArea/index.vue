@@ -77,6 +77,7 @@
 				detailindex: null,
 				userData: {},
 				defaultTimeTips: '请选择时间',
+				defaultTime: '',
 				clearItem: {}
 			}
 		},
@@ -154,7 +155,8 @@
 			confirmTime(res) {
 				let arr = res.data.split("-")
 				this.$refs['QS_Picekr_date'].hide();
-				this.defaultTime = res.data
+				this.defaultTime = res.data;
+				console.log('changgeTime == ',this.defaultTime)
 				this.defaultTimeTips = '到期日期：'+arr[0]+'年'+ (arr[1]< 10 ? '0'+arr[1] : arr[1])+'月'+(arr[2]< 10 ? '0'+arr[2] : arr[2])+'日'
 			},
 			//取消弹框
@@ -201,12 +203,18 @@
 				}
 			},
 			updataDomain(){
-				let that = this
+				console.log('sendTime ==',new Date(this.defaultTime).getTime())
+				console.log(this.defaultTime.replace(/-/g, '/'))
+				let that = this;
 				let params = {
 					oid: that.userData.oId,
 					endTime: new Date(that.defaultTime).getTime()
 				}
+				if(new Date(that.defaultTime).getTime() == NaN){
+					params.endTime = Date.parse(new Date(this.defaultTime.replace(/-/g, '/')))
+				}
 				http.getUpdateDomains(params).then(res => {
+					console.log('开通领域 success',res)
 					uni.showToast({
 						title: '开通领域成功',
 						icon: 'none',

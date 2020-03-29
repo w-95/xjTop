@@ -415,26 +415,23 @@
 					if(data.code == 0){
 						if(!val){
 							for(let i of data.data){
-								i.isNews = true
+								i.isNews = false
 							}
 						}else {
 							for(let i in val){
 								for(let j of data.data){
 									if(val[i].title == j.domainTitle && val[i].time == ''){
-										j.isNews = true
+										j.isNews = false
 									}
 									if(val[i].title == j.domainTitle && val[i].time!= '' && j.latestTime > val[i].time){
-										console.log(j.latestTime , val[i].time,'111')
 										j.isNews = true
 									}else if(val[i].title == j.domainTitle && val[i].time!= '' && j.latestTime < val[i].time){
-										console.log(j.latestTime , val[i].time,'222')
 										j.isNews = false
 									}
 								}
 							}
 						}
 						that.doMainData = data.data;
-						console.log(that.doMainData)
 						that.isInitLoading = false
 						uni.hideLoading()
 					}

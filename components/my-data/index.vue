@@ -95,6 +95,96 @@
 			this.getCount()
 		},
 		methods: {
+			//开启订阅消息
+			openMsg() {
+			    var that = this;
+				if (wx.requestSubscribeMessage) {
+					uni.requestSubscribeMessage({
+						tmplIds: ['KohP-FGpzCeJNYdw9xrn9ru1ojglnmnEzNzHpxMDUBM'],
+						success(res){
+							if(res['KohP-FGpzCeJNYdw9xrn9ru1ojglnmnEzNzHpxMDUBM'] === 'accept'){
+								uni.openSetting({
+									success(res){
+										console.log('openSetting的成功回调数据：', res);
+										that.guidSubscribeMessageAuthAfter();
+									}
+								})
+							}else if(res['KohP-FGpzCeJNYdw9xrn9ru1ojglnmnEzNzHpxMDUBM'] === 'reject'){
+								that.guideOpenSubscribeMessage();
+							}else {
+								uni.showToast({
+								  title: '授权订阅消息有误',
+								  icon: 'none'
+								});
+							 }
+						},
+						fail(res){
+							//20004:用户关闭了主开关，无法进行订阅,引导开启
+							console.log('fail res==',res)
+							if(res.errCode == 20004){
+								that.guideOpenSubscribeMessage();
+							}
+						}
+					})
+				}else {
+					uni.showToast({
+						title: '请更新您微信版本，来获取订阅消息功能',
+						icon: 'none'
+					})
+				}
+			},
+			guideOpenSubscribeMessage() {
+				//引导用户，手动引导用户去设置页开启，
+				let that = this;
+				uni.showModal({
+				    title: '',
+				    content: '检测到您没有开启订阅消息的权限，是否去设置？',
+				    success: function (res) {
+				        if (res.confirm) {
+				            console.log('用户点击确定');
+							uni.openSetting({
+								success(res){
+									console.log('openSetting的成功回调数据：', res);
+									that.guidSubscribeMessageAuthAfter();
+								}
+							})
+				        } else if (res.cancel) {
+				            console.log('用户点击取消');
+							uni.showToast({
+								title: '您已拒绝订阅消息授权',
+								icon: 'none'
+							})
+				        }
+				    }
+				});
+			 },
+			guidSubscribeMessageAuthAfter() {
+			    //引导用户 开启订阅消息 之后，「openSetting」 接口暂时不会返回，用户手动设置后的状态，所以采用「getSetting」接口重新进行查询
+			    wx.getSetting({
+					withSubscriptions: true,
+					success: res => {
+						console.log('guidSubscribeMessageAuthAfter res==',res)
+						let {
+							authSetting = {},
+							subscriptionsSetting: { mainSwitch = false, itemSettings = {} } = {}
+						} = res;
+						console.log('authSetting ==',authSetting)
+						console.log('itemSettings ==',itemSettings)
+						if (
+							(authSetting['scope.subscribeMessage'] || mainSwitch) &&
+							(itemSettings['KohP-FGpzCeJNYdw9xrn9ru1ojglnmnEzNzHpxMDUBM'] === 'accept')
+							) {
+								// this.submitClock();
+								// console.log('用户手动开启同意了，订阅消息');
+							} else {
+							uni.showToast({
+								title: '您没有同意授权订阅消息，订阅失败',
+								icon: 'none'
+							})
+						}
+					}
+			    });
+			},
 			//获取粉丝，关注count
 			getCount(){
 				let params = {
@@ -129,10 +219,11 @@
 				})
 			},
 			addFollow(type){
+				console.log(this.auth.userId)
 				let params = {
 					userId: this.auth.userId,
 					followedUserId: this.authData.articleAuthorId
-				}
+				},that = this;
 				http.follow(params).then(data => {
 					if(type == 'add'){
 						this.isAddFollow = true;
@@ -141,6 +232,7 @@
 							mask: true,
 							duration: 1500
 						})
+						that.openMsg()
 					}else if(type == 'clear'){
 						this.isAddFollow = false;
 						uni.showToast({

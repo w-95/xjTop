@@ -37,7 +37,12 @@
 		computed: {},
 		onShow() {},
 		methods: {
-			
+			// uni.navigateTo({
+			// 	url: '../addFollow/index'
+			// })
+			goOpenArea(item){
+				console.log(item)
+			}
 		}
 	}
 </script>

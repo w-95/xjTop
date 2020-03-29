@@ -92,7 +92,7 @@
 				icon: 'loading'
 			})
 			uni.setNavigationBarTitle({
-			    title: '我的' 
+			    title: '个人主页' 
 			})
 			this.getUserArticles(that.activeTitleItem)
 		},
@@ -114,14 +114,14 @@
 			},
 			// 下拉刷新
 			onPullDownRefresh() {
-				this.start = 'top'
-				this.page = 1
-				this.size = 10
+				this.start = 'top';
+				this.page = 1;
+				this.size = 10;
 				uni.showNavigationBarLoading();
 				if(this.activeTitleItem == 1){
-					this.getUserArticles(this.activeTitleItem)
+					this.getUserArticles(this.activeTitleItem);
 				}else if(this.activeTitleItem == 2){
-					this.getUserComments(this.activeTitleItem)
+					this.getUserComments(this.activeTitleItem);
 				}
 				uni.showToast({
 					title: '已经是最新了',

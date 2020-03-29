@@ -158,6 +158,7 @@
 		box-sizing: border-box;
 		left: 0;
 		bottom: 0;
+		background-color:#f6f6f6
 	}
 	.service-and-specil {
 		background-color: white;
@@ -401,11 +402,21 @@
 		width: 100%;
 	}
 	.none{
-		height: 100%;
+		// height: 100%;
+		position:absolute;
+		top: 0upx;
+		box-sizing: border-box;
+		left: 0;
+		bottom: 0;
 		background-color:#f6f6f6
 	},
 	.add{
-		height: '';
-		min-height: 700upx;
+		position:absolute;
+		top: 0upx;
+		box-sizing: border-box;
+		left: 0;
+		bottom: 0;
+		// height: '';
+		// min-height: 700upx;
 		background-color:#f6f6f6
 	}

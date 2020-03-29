@@ -166,11 +166,17 @@
 				});
 			},
 			goAddFollow(){
-				if(this.params.articleAuthorId){
+				console.log(this.params.articleAuthorId,this.auth)
+				if(this.params.articleAuthorId && this.auth != null && this.auth.userId){
 					this.params.articleAuthor.userUpdateTime = time.formatTime(this.params.articleAuthor.userUpdateTime,"Y-M-D h:m:s")
 					this.setDetailAuthData(this.params)
 					uni.navigateTo({
 						url: '../addFollow/index'
+					})
+				}else {
+					uni.showToast({
+						title: '请先登陆！',
+						icon: 'none'
 					})
 				}
 			},

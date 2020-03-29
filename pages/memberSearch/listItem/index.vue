@@ -43,7 +43,7 @@
 			</view>
 			<view class='time'>{{item.sendTime}}</view>
 		</view>
-		<button open-type='contact'  session-from='weapp' v-for='(item,index) in listBox' :key='index' class='list-box' v-if="type == 'message'">
+		<view v-for='(item,index) in listBox' :key='index' class='list-box' v-if="type == 'message'" @click='addGoContactUsers(item)'>
 			<view class='logo-icon'>
 				<image :src="item.user.userAvatarURL || item.userAvatarURL" mode="widthFix"></image>
 			</view>
@@ -52,7 +52,7 @@
 				<view class='mesage-text'>{{item.message}}</view>
 			</view>
 			<view class='time'>{{item.sendTime}}</view>
-		</button>
+		</view>
 		
 		<view v-for='(item,index) in listBox' :key='index' class='list-box' v-if="type == 'userList'">
 			<view class='logo-icon'>
@@ -154,8 +154,13 @@
 					url: '../contactUsers/index?id='+item.oId+'&name='+item.userName
 				})
 			},
+			addGoContactUsers(item){
+				console.log(item)
+				uni.navigateTo({
+					url: '../contactUsers/index?id='+item.userId+'&name='+item.user.userName
+				})
+			},
 			goService(){
-				console.log(11)
 				uni.navigateToMiniProgram({
 				  appId: 'wx277c9f1d194fce2f',
 				  path: '',
@@ -170,6 +175,9 @@
 					  console.log(tips)
 				  }
 				})
+			},
+			goChoiceField(){
+				
 			}
 		}
 	}
