@@ -118,12 +118,15 @@ export const bucketName = 'xiejiang';
 export const portrait = 'https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoEZR8fMGUADxBT0rfnpB5OYJqYsWA4ec8DNl2pH7ibVdjoyuHCzbENZpk7ERW1GiaibNtvyQmwRKltg/132';
 //客服提示
 export const CustomerServiceTips = '鞋匠云集荟聚鞋业资源,欢迎您开通领域权限,畅享更多鞋业资讯,若有需要了解点击下方【联系客服】'
+//视频播放的所有后缀几个
+export const VideoType = ['.wmv','.asf','.asx','.rm','.rmvb','.mp4','.mov','.m4v','.avi','.dat','.mkv','.flv','.vob'];
 export default {
 	phones,
 	QiNiuImgDomainName,
 	QQSDK,
 	bucketName,
 	portrait,
-	CustomerServiceTips
+	CustomerServiceTips,
+	VideoType
 }
 

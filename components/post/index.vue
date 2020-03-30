@@ -1,8 +1,8 @@
 <template>
 	<view class="">
-		<view class="box" v-for="(item,index) in dataList"  @click='goComment(item)' :key='index'>
+		<view class="box" v-for="(item,index) in dataList" :key='index'>
 			<!-- title部分 -->
-			<view class="title">
+			<view class="title" @click="goComment(item,'title')">
 				<view class="title-logo" v-if="item.articleStick && item.articleStick!==0">
 					置顶
 				</view>
@@ -20,7 +20,7 @@
 			
 			<view class='img-list' v-if='item.offered'>
 			</view>
-			<view class="content" v-else>
+			<view class="content" v-else  @click="goComment(item,'content')">
 				<view v-html="item.articleContent.textContent.replace(/(\r\n|\n|\r|↵)/gm, '<br/>')" class="text-content"></view>
 				<img-arr v-if='item.articleContent.imgArr.length > 0' :imgArr = 'item.articleContent.imgArr'></img-arr>
 			</view>
@@ -43,7 +43,9 @@
 </template>
 
 <script>
-	import imgArr from './imgArrTemplate/index.vue'
+	import imgArr from './imgArrTemplate/index.vue';
+	import d1 from '../../common/data/d1.js';
+	// import VideoType
 	import {
 		mapState,
 		mapMutations
@@ -98,16 +100,29 @@
 			aa(val){
 				return val.replace(/(\r\n|\n|\r|↵)/gm, '<br/>')
 			},
-			goComment (item) {
-				console.log(item)
+			goComment (item,type) {
+				console.log(d1)
 				this.setOidVal(item.oId)
 				this.setDetailData({
 					id: item.oId,
 					title: item.articleTitle
 				})
-				uni.navigateTo({
-					url: '../postingDetail/index?id='+item.oId+'&title='+item.articleTitle
-				})
+				let isVideo = false;
+				//是否有视屏
+				for(let i of d1.VideoType){
+					if(item.articleOriginalContent.indexOf(i) != -1){
+						isVideo = true;
+					}
+				}
+				if(isVideo && type == 'title'){
+					uni.navigateTo({
+						url: '../postingDetail/index?id='+item.oId+'&title='+item.articleTitle
+					})
+				}else if(!isVideo) {
+					uni.navigateTo({
+						url: '../postingDetail/index?id='+item.oId+'&title='+item.articleTitle
+					})
+				}
 			},
 			setDeailDataList(){
 				if(this.deailDataList){
@@ -128,11 +143,23 @@
 								let left_src = arr[j] .indexOf('(');
 								let right_src = arr[j] .indexOf(')');
 								let src = arr[j].substr(left_src + 1, right_src - left_src - 1)
-								obj.isImg = true
-								newArr.push({
-									src: src,
-									alt: content
-								})
+								obj.isImg = true;
+								['.wmv','.asf','.asx','.rm','.rmvb','.mp4','.mov','.m4v','.avi','.dat','.mkv','.flv','.vob'];
+								if(arr[j].indexOf('.wmv') !==-1 || arr[j].indexOf('.rmvb') !==-1 || arr[j].indexOf('.mov') !==-1 || arr[j].indexOf('.m4v') !==-1 ||
+									arr[j].indexOf('.asf') !==-1 || arr[j].indexOf('.rm') !==-1|| arr[j].indexOf('.mkv') !==-1 || arr[j].indexOf('.avi') !==-1 || 
+									arr[j].indexOf('..asx') !==-1 || arr[j].indexOf('.mp4') !==-1 || arr[j].indexOf('.flv') !==-1|| arr[j].indexOf('.dat') !==-1|| arr[j].indexOf('.vob') !==-1){
+									newArr.push({
+										src: src,
+										alt: content,
+										isAplay: true
+									})
+								}else {
+									newArr.push({
+										src: src,
+										alt: content,
+										isAplay: false
+									})
+								}
 								obj.imgArr = newArr.slice(0, 3)
 							}else {
 								obj.isImg = false
@@ -141,7 +168,8 @@
 						}
 						this.deailDataList[i].articleContent = obj
 					}
-					this.dataList = this.deailDataList
+					this.dataList = this.deailDataList;
+					console.log(this.dataList)
 				} 
 			}
 		}

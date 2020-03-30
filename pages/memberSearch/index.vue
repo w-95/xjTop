@@ -105,7 +105,6 @@
 		},
 		methods: {
 			init(type){
-				console.log(type)
 				let that = this,arr=[];
 				http.getApplyDomains({type:type}).then(data => {
 					if(type == 1) {

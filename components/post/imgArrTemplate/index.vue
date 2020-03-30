@@ -3,7 +3,8 @@
 		<view class="box" v-if="imgArr.length > 0">
 			<view :class="imgArr.length == 1 ? 'img-box' : imgArr.length == 2 ? 'img-box-two' : 'img-box-three'">
 				<view class="item" v-for='(i,idx) in imgArr' :key='idx'>
-					<image :src="i.src" mode="aspectFill" alt='i.alt'></image>
+					<image v-if='!i.isAplay' :src="i.src" mode="aspectFill" alt='i.alt'></image>
+					<video v-if='i.isAplay' style='width: 100%;height: 100%;' :src='i.src' objectFit='cover' initialTime=1 show-fullscreen-btn=false></video>
 				</view>
 			</view>
 		</view>
@@ -20,7 +21,9 @@
 				default: () => []
 			}
 		},
-		created(){},
+		created(){
+			console.log(this.imgArr)
+		},
 		watch: {},
 	}
 </script>

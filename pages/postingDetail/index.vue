@@ -32,7 +32,9 @@
 				<view v-if="params.articleContent.textContent" v-html="params.articleContent.textContent" class="text-content"></view>
 				<view class="img-box" v-if='params.articleContent.imgArr.length>0'>
 					<view class="item" v-for='(i,idx) in params.articleContent.imgArr' :key='idx' @click='ViewImage' :data-url="params.articleContent.imgArr[idx]" :data-imgArr="params.articleContent.imgArr" :data-index='idx'>
-						<image :src="i.src" mode="" alt='i.alt' mode="widthFix" ></image>
+						<image v-if='!i.isAplay' :src="i.src" mode="" alt='i.alt' mode="widthFix"></image>
+						<!-- <image v-if='!i.isAplay' :src="i.src" mode="aspectFill" alt='i.alt'></image> -->
+						<video v-if='i.isAplay' style='width: 100%;min-height: 300rpx;' :src='i.src' objectFit='cover' initialTime=1 show-fullscreen-btn=false></video>
 					</view>
 				</view>
 			</view>
@@ -156,14 +158,19 @@
 		methods: {
 			...mapMutations(['setOidVal','setIsDetails','setDetailAuthData']),
 			ViewImage(e) {
+				console.log(e)
 				let arr = []
 				for(let i of e.currentTarget.dataset.imgarr){
-					arr.push(i.src)
+					if(i.src.indexOf('.mp4') == -1){
+						arr.push(i.src)
+					}
 				}
-				uni.previewImage({
-					urls: arr,
-					current: arr[e.currentTarget.dataset.index]
-				});
+				if(arr.length > 0){
+					uni.previewImage({
+						urls: arr,
+						current: arr[e.currentTarget.dataset.index]
+					});
+				}
 			},
 			goAddFollow(){
 				console.log(this.params.articleAuthorId,this.auth)
@@ -254,10 +261,25 @@
 							let right_src = arr[j] .indexOf(')');
 							let src = arr[j].substr(left_src + 1, right_src - left_src - 1)
 							obj.isImg = true
-							obj.imgArr.push({
-								src: src,
-								alt: content
-							})
+							// obj.imgArr.push({
+							// 	src: src,
+							// 	alt: content
+							// })
+							if(arr[j].indexOf('.wmv') !==-1 || arr[j].indexOf('.rmvb') !==-1 || arr[j].indexOf('.mov') !==-1 || arr[j].indexOf('.m4v') !==-1 ||
+									arr[j].indexOf('.asf') !==-1 || arr[j].indexOf('.rm') !==-1|| arr[j].indexOf('.mkv') !==-1 || arr[j].indexOf('.avi') !==-1 || 
+									arr[j].indexOf('..asx') !==-1 || arr[j].indexOf('.mp4') !==-1 || arr[j].indexOf('.flv') !==-1|| arr[j].indexOf('.dat') !==-1|| arr[j].indexOf('.vob') !==-1){
+								obj.imgArr.push({
+									src: src,
+									alt: content,
+									isAplay: true
+								})
+							}else {
+								obj.imgArr.push({
+									src: src,
+									alt: content,
+									isAplay: false
+								})
+							}
 						}else {
 							obj.isImg = false
 							obj.textContent = obj.textContent+arr[j].replace(/(\r\n|\n|\r|↵)/gm, '<br/>')
@@ -265,6 +287,7 @@
 					}
 					data.articleContent = obj
 					that.params = data
+					console.log(that.params)
 					that.showTemplate = true
 					that.getCommentList('init')
 				})
