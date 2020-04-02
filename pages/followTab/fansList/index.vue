@@ -16,6 +16,7 @@
 
 <script>
 	import {mapState,mapMutations} from 'vuex';
+	import time from '../../../utils/validate.js';
 	export default {
 		data() {
 			return {}
@@ -37,11 +38,21 @@
 		computed: {},
 		onShow() {},
 		methods: {
-			// uni.navigateTo({
-			// 	url: '../addFollow/index'
-			// })
+			...mapMutations(['setOidVal','setIsDetails','setDetailAuthData']),
 			goOpenArea(item){
-				console.log(item)
+				let params = {
+					articleAuthorId: item.followedUserId,
+					userName: item.followedUser.userName,
+					articleAuthorName: item.followedUser.userName,
+					articleAuthor: {
+						userAvatarURL: item.followedUser.userAvatarURL,
+						userUpdateTime: item.followedUser.userUpdateTime
+					},
+				}
+				this.setDetailAuthData(params)
+				uni.navigateTo({
+					url: '../addFollow/index'
+				})
 			}
 		}
 	}

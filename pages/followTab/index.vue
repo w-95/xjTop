@@ -97,15 +97,10 @@
 				http.getFollowList(params).then(res =>{
 					uni.hideLoading();
 					if(this.DomainType == 0){
-						this.followList = res.reduce((cur,next) => {
-							obj[next.followedUserId] ? "" : obj[next.followedUserId] = true && cur.push(next);
-							return cur;
-						},[]) //设置cur默认类型为数组，并且初始值为空的数组
+						this.followList = res
+						//设置cur默认类型为数组，并且初始值为空的数组
 					}else{
-						this.fansList = res.reduce((cur,next) => {
-							obj[next.followedUserId] ? "" : obj[next.followedUserId] = true && cur.push(next);
-							return cur;
-						},[]) //设置cur默认类型为数组，并且初始值为空的数组
+						this.fansList = res //设置cur默认类型为数组，并且初始值为空的数组
 					}
 				})
 			},
