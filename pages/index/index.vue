@@ -177,7 +177,7 @@
 		 },
 		created(){
 			// this.init('init')
-			
+			// console.log(uni.serviceMarket)
 		},
 		onShow() {
 			let that = this

@@ -127,6 +127,11 @@
 			},
 			//发布帖子
 			sendComment(){
+				uni.showToast({
+					title: '上传中',
+					mask: true,
+					icon: 'loading'
+				})
 				let that = this;
 				if(that.clickNum >= 1){
 					return false
@@ -151,23 +156,59 @@
 							"articleImg1URL": that.imgArr[0] || '',
 							"articleCity": that.currProvince
 						}
-						that.contentFilter(params.articleContent,function(){
-							http.sengComment(params).then(data =>{
-								if(data.code == 0 && data.data){
-									// uni.reLaunch({
-										// url: '../index/index'
-									// })
-									uni.navigateTo({
-									   url:"../fieldTab/index?domainTitke="+that.articleTags
+						wx.serviceMarket.invokeService({
+							service: 'wxee446d7507c68b11',
+							api: 'msgSecCheck',
+							data: {
+							    "Action": "TextApproval",
+							    "Text": that.titleVal+that.contentValue
+							},
+						}).then(res =>{
+							let isSend = true;
+							if(res.data.Response.EvilTokens.length > 0){
+								res.data.Response.EvilTokens.forEach((element,index) => {
+									console.log(element)
+									if(element.EvilType == 1 || element.EvilType == 2|| element.EvilType == 3|| element.EvilType == 4|| element.EvilType == 6|| element.EvilType == 7|| element.EvilType == 8) {
+										isSend = false;
+										uni.showToast({
+											title: "您发布消息【"+element.EvilKeywords[0]+"】不符合平台规范，请修改后再发布",
+											icon: 'none'
+										})
+									}
+								})
+								if(isSend){
+									http.sengComment(params).then(data =>{
+										if(data.code == 0 && data.data){
+											uni.navigateTo({
+											   url:"../fieldTab/index?domainTitke="+that.articleTags
+											})
+											uni.hideToast()
+										}else {
+											that.imgStr = ''
+										}	
 									})
-									uni.showToast({
-										title: '上传成功',
-										icon: 'none'
-									})
-								}else {
-									that.imgStr = ''
-								}	
-							})
+								}
+							}else {
+								http.sengComment(params).then(data =>{
+									if(data.code == 0 && data.data){
+										// uni.reLaunch({
+											// url: '../index/index'
+										// })
+										uni.navigateTo({
+										   url:"../fieldTab/index?domainTitke="+that.articleTags
+										})
+										// uni.showToast({
+										// 	title: '上传成功',
+										// 	icon: 'none'
+										// })
+										uni.hideToast()
+									}else {
+										that.imgStr = ''
+									}	
+								})
+							}
+						}).catch(err => {
+						  console.error('invokeService fail', err)
 						})
 					}
 					setTimeout(function () { that.clickNum = 0 }, 3000);
@@ -207,6 +248,19 @@
 				uni.redirectTo({
 					url: '../city/index?type='+this.articleTags
 				})
+			},
+			//判断违禁词提示
+			prohibitedWords(arr){
+				if(arr.length > 0){
+					arr.forEach((element,index) => {
+						if(element.EvilType != 9 || element.EvilType != 5) {
+							uni.showToast({
+								title: "您发布消息【"+element.EvilKeywords[0]+"】不符合平台规范，请修改后再发布",
+								icon: 'none'
+							})
+						}
+					})
+				}
 			},
 			getImgArr(){
 				let that = this
@@ -262,6 +316,7 @@
 						})
 						that.tempFilePaths = res.tempFilePaths;
 						if(that.tempFilePaths.length > 1){
+							console.log(that.tempFilePaths)
 							for(let i of that.tempFilePaths) {
 								that.uploadQiniu(i)
 							}
@@ -270,6 +325,38 @@
 							
 						}
 					}
+				})
+			},
+			//图像内容安全识别
+			imgSecurity(file){
+				let that = this;
+				wx.serviceMarket.invokeService({
+					service: 'wxee446d7507c68b11',
+					api: 'imgSecCheck',
+					data: {
+					    "Action": "ImageModeration",
+					    "Scenes": ["PORN", "POLITICS", "TERRORISM", "TEXT"],
+					    "ImageUrl": file,
+					    "ImageBase64": "",
+					    "Config": "",
+					    "Extra": ""
+					},
+				}).then(res => {
+					console.log(res)
+					if(res.data.Response.Suggestion == 'PASS'){
+						that.unLoadImgArr.push(file)
+						if(that.unLoadImgArr.length == that.tempFilePaths.length){
+							that.imgArr = that.unLoadImgArr
+						}
+					}else if(res.data.Response.Suggestion =='BLOCK' || res.data.Response.Suggestion =='REVIEW') {
+						that.imgArr = that.unLoadImgArr
+						uni.showToast({
+							title: "您上传图片不符合平台规范，请重新上传",
+							icon: 'none'
+						})
+					}
+				}).catch(err => {
+					console.error('invokeService fail', err)
 				})
 			},
 			//上传图片到七牛
@@ -285,11 +372,13 @@
 					formData: {
 					    token: that.qiniToken,
 					},
-					success: resData =>{//
-						that.unLoadImgArr.push(d1.QiNiuImgDomainName+JSON.parse(resData.data).key)
-						if(that.unLoadImgArr.length == that.tempFilePaths.length){
-							that.imgArr = that.unLoadImgArr
-						}
+					success: resData =>{
+						that.imgSecurity(d1.QiNiuImgDomainName+JSON.parse(resData.data).key)
+					// console.log(d1.QiNiuImgDomainName+JSON.parse(resData.data).key)
+					// 	that.unLoadImgArr.push(d1.QiNiuImgDomainName+JSON.parse(resData.data).key)
+					// 	if(that.unLoadImgArr.length == that.tempFilePaths.length){
+					// 		that.imgArr = that.unLoadImgArr
+					// 	}
 					},
 					fail: res => {}
 				})
@@ -301,6 +390,9 @@
 			}else {
 				this.getPostion()
 			}
+			wx.cloud.init({
+			  env: 'shoe-maker-z3y04',
+			})
 			uni.showToast({
 				title: '加载中...',
 				mask: true,
