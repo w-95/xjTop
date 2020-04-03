@@ -1,7 +1,9 @@
 //测试域名地址
 // const ENV_TEST = "http://47.96.115.210:8080/api/"
 //线上域名地址
-const ENV_TEST = "https://xj.cachito.top/api/"
+// const ENV_TEST = "https://xj.cachito.top/api/"
+//线上域名地址https://www.xiejiang.xyz/api/list/follow/1579605469634/0
+const ENV_TEST = "https://www.xiejiang.xyz/api/"
  
 // post请求封装
 function postRequest(url, data) {
